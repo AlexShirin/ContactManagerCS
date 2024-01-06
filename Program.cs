@@ -14,7 +14,7 @@ public static partial class Program
         string connection = builder.Configuration.GetConnectionString("DefaultConnection");
         builder.Services.AddDbContext<ContactDbContext>(options => options.UseNpgsql(connection));
 
-        builder.Services.AddControllers();  // добавляем поддержку контроллеров
+        builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen(options =>
         {
@@ -25,7 +25,7 @@ public static partial class Program
             options.SwaggerDoc("v1", new OpenApiInfo
             {
                 Version = "v1",
-                Title = "Contact API",
+                Title = "Contact manager",
                 Description = "An ASP.NET Core Web API for managing contact items",
                 TermsOfService = new Uri("https://example.com/terms"),
                 Contact = new OpenApiContact
