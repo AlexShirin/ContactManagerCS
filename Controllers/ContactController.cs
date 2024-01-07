@@ -27,7 +27,6 @@ public class ContactController : ControllerBase
     public async Task<ActionResult<Contact>> GetById(int id)
     {
         var item = await _context.ContactItems.FindAsync(id);
-
         return item is null ? NotFound() : item;
     }
 
