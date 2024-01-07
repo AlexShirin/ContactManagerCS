@@ -1,7 +1,9 @@
-using ContactManagerCS.Models;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using ContactManagerCS.Database;
+using ContactManagerCS.Contracts;
+using ContactManagerCS.Repositories;
 
 namespace ContactManagerCS;
 
@@ -13,6 +15,7 @@ public static partial class Program
 
         string connection = builder.Configuration.GetConnectionString("DefaultConnection");
         builder.Services.AddDbContext<ContactDbContext>(options => options.UseNpgsql(connection));
+        builder.Services.AddScoped<IContactRepository, ContactRepository>();
 
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
