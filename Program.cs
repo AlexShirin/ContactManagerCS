@@ -1,9 +1,9 @@
-using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using ContactManagerCS.Database;
 using ContactManagerCS.Contracts;
 using ContactManagerCS.Repositories;
+using AutoMapper;
 
 namespace ContactManagerCS;
 
@@ -19,6 +19,7 @@ public static partial class Program
 
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddAutoMapper(typeof(ContactMapperProfile));
         builder.Services.AddSwaggerGen(options =>
         {
             var basePath = AppContext.BaseDirectory;
@@ -63,5 +64,14 @@ public static partial class Program
         app.MapControllers();
 
         await app.RunAsync();
+    }
+}
+
+public class ContactMapperProfile : Profile
+{
+    public ContactMapperProfile()
+    {
+        SourceMemberNamingConvention = ExactMatchNamingConvention.Instance;
+        DestinationMemberNamingConvention = ExactMatchNamingConvention.Instance;
     }
 }

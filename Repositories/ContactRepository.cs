@@ -1,4 +1,6 @@
-﻿using ContactManagerCS.Contracts;
+﻿using AutoMapper;
+
+using ContactManagerCS.Contracts;
 using ContactManagerCS.Database;
 using ContactManagerCS.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -6,11 +8,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ContactManagerCS.Repositories;
 
-public class ContactRepository(ContactDbContext contactDbContext) : IContactRepository
+public class ContactRepository(ContactDbContext contactDbContext, IMapper mapper) : IContactRepository
 {
-    public async Task<List<Contact>> GetAll()
+    public async Task<List<ContactResponse>> GetAll()
     {
-        return await contactDbContext.ContactItems.ToListAsync();
+        var contacts = await contactDbContext.ContactItems.ToListAsync();
+        return mapper.Map<List<ContactResponse>>(contacts);
     }
 
     public async Task<Contact> GetById(int id)

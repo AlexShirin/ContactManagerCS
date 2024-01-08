@@ -16,7 +16,7 @@ public class ContactController(IContactRepository repo) : ControllerBase
     /// Show all contacts
     /// </summary>
     [HttpGet]
-    public async Task<List<Contact>> GetAll()
+    public async Task<List<ContactResponse>> GetAll()
     {
         return await repo.GetAll();
     }
