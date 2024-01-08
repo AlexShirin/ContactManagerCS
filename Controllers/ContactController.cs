@@ -11,22 +11,15 @@ namespace ContactManagerCS.Controllers;
 [ApiController]
 [Route("[controller]")]
 [Produces("application/json")]
-public class ContactController : ControllerBase
+public class ContactController(IContactRepository repo) : ControllerBase
 {
-    private IContactRepository _repo;
-
-    public ContactController(ContactDbContext context, IContactRepository repo)
-    {
-        _repo = repo;
-    }
-
     /// <summary>
     /// Show all contacts
     /// </summary>
     [HttpGet]
     public async Task<List<Contact>> GetAll()
     {
-        return await _repo.GetAll();
+        return await repo.GetAll();
     }
 
     /// <summary>
@@ -35,7 +28,7 @@ public class ContactController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<Contact>> GetById(int id)
     {
-        return await _repo.GetById(id);
+        return await repo.GetById(id);
     }
 
     /// <summary>
@@ -44,7 +37,7 @@ public class ContactController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Contact>> Create(Contact item)
     {
-        return await _repo.Create(item);
+        return await repo.Create(item);
     }
 
     /// <summary>
@@ -53,7 +46,7 @@ public class ContactController : ControllerBase
     [HttpPut]
     public async Task<ActionResult<Contact>> Update(Contact item)
     {
-        return await _repo.Update(item);
+        return await repo.Update(item);
     }
 
     /// <summary>
@@ -62,6 +55,6 @@ public class ContactController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<ActionResult<Contact>> DeleteById(int id)
     {
-        return await _repo.DeleteById(id);
+        return await repo.DeleteById(id);
     }
 }
