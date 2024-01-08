@@ -2,7 +2,6 @@
 using ContactManagerCS.Database;
 using ContactManagerCS.Models;
 using ContactManagerCS.Repositories;
-
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
