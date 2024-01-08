@@ -16,42 +16,47 @@ public class ContactRepository(ContactDbContext contactDbContext, IMapper mapper
         return mapper.Map<List<ContactResponse>>(contacts);
     }
 
-    public async Task<Contact> GetById(int id)
+    public async Task<ContactResponse> GetById(int id)
     {
         var item = await contactDbContext.ContactItems.FindAsync(id);
         if (item is null) { throw new("Can't GetById: contact with given Id don't exist"); }
-        return item;
+        return mapper.Map<ContactResponse>(item);
     }
 
-    public async Task<Contact> Create(Contact item)
+    public async Task<ContactResponse> Create(AddContactRequest item)
     {
-        var exists = await contactDbContext.ContactItems.FindAsync(item.Id);
+        var contact = mapper.Map<Contact>(item);
+
+        var exists = await contactDbContext.ContactItems.FindAsync(contact.Id);
         if (exists is not null) { throw new("Can't Create: contact with given Id already exists"); }
 
-        contactDbContext.ContactItems.Add(item);
+        contactDbContext.ContactItems.Add(contact);
         await contactDbContext.SaveChangesAsync();
-        return item;
+
+        return mapper.Map<ContactResponse>(contact);
     }
 
-    public async Task<Contact> Update(Contact item)
+    public async Task<ContactResponse> Update(AddContactRequest item)
     {
-        var exists = await contactDbContext.ContactItems.FindAsync(item.Id);
+        var contact = mapper.Map<Contact>(item);
+
+        var exists = await contactDbContext.ContactItems.FindAsync(contact.Id);
         if (exists is null) { throw new("Can't Update: contact with given Id don't exist"); }
 
         contactDbContext.ContactItems.Remove(exists);
-        contactDbContext.ContactItems.Add(item);
+        contactDbContext.ContactItems.Add(contact);
         await contactDbContext.SaveChangesAsync();
-        return item;
+
+        return mapper.Map<ContactResponse>(contact);
     }
 
-    public async Task<Contact> DeleteById(int id)
+    public async Task<ContactResponse> DeleteById(int id)
     {
         var item = await contactDbContext.ContactItems.FindAsync(id);
         if (item is null) { throw new("Can't Delete: contact with given Id don't exist"); }
 
         contactDbContext.ContactItems.Remove(item);
         await contactDbContext.SaveChangesAsync();
-
-        return item;
+        return mapper.Map<ContactResponse>(item);
     }
 }

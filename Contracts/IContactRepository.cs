@@ -7,8 +7,8 @@ namespace ContactManagerCS.Contracts;
 public interface IContactRepository
 {
     public Task<List<ContactResponse>> GetAll();
-    public Task<Contact> GetById(int id);
-    public Task<Contact> Create(Contact item);
-    public Task<Contact> Update(Contact item);
-    public Task<Contact> DeleteById(int id);
+    public Task<ContactResponse> GetById(int id);
+    public Task<ContactResponse> Create(AddContactRequest item);
+    public Task<ContactResponse> Update(AddContactRequest item);
+    public Task<ContactResponse> DeleteById(int id);
 }

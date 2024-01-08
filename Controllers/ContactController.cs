@@ -25,7 +25,7 @@ public class ContactController(IContactRepository repo) : ControllerBase
     /// Shows a specific contact
     /// </summary>
     [HttpGet("{id}")]
-    public async Task<ActionResult<Contact>> GetById(int id)
+    public async Task<ActionResult<ContactResponse>> GetById(int id)
     {
         return await repo.GetById(id);
     }
@@ -34,7 +34,7 @@ public class ContactController(IContactRepository repo) : ControllerBase
     /// Create a contact
     /// </summary>
     [HttpPost]
-    public async Task<ActionResult<Contact>> Create(Contact item)
+    public async Task<ActionResult<ContactResponse>> Create(AddContactRequest item)
     {
         return await repo.Create(item);
     }
@@ -43,7 +43,7 @@ public class ContactController(IContactRepository repo) : ControllerBase
     /// Update a specific contact
     /// </summary>
     [HttpPut]
-    public async Task<ActionResult<Contact>> Update(Contact item)
+    public async Task<ActionResult<ContactResponse>> Update(AddContactRequest item)
     {
         return await repo.Update(item);
     }
@@ -52,7 +52,7 @@ public class ContactController(IContactRepository repo) : ControllerBase
     /// Deletes a specific contact
     /// </summary>
     [HttpDelete("{id}")]
-    public async Task<ActionResult<Contact>> DeleteById(int id)
+    public async Task<ActionResult<ContactResponse>> DeleteById(int id)
     {
         return await repo.DeleteById(id);
     }
