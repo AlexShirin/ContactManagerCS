@@ -3,6 +3,10 @@
 using ContactManagerCS.Contracts;
 using ContactManagerCS.Database;
 using ContactManagerCS.Models;
+using ContactManagerCS.Validation;
+
+using FluentValidation.Results;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,6 +29,20 @@ public class ContactRepository(ContactDbContext contactDbContext, IMapper mapper
 
     public async Task<ContactResponse> Create(AddContactRequest item)
     {
+        AddContactRequestValidator validator = new();
+
+        ValidationResult validationResults = validator.Validate(item);
+
+        if (!validationResults.IsValid)
+        {
+            foreach (var failure in validationResults.Errors)
+            {
+                Console.WriteLine("Contact property <" + failure.PropertyName + "> failed validation. Error was: " + failure.ErrorMessage);
+            }
+            Console.WriteLine();
+            return ContactResponse.Empty();
+        }
+
         var contact = mapper.Map<Contact>(item);
 
         var exists = await contactDbContext.ContactItems.FindAsync(contact.Id);
