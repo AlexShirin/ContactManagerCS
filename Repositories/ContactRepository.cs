@@ -18,9 +18,9 @@ public class ContactRepository(ContactDbContext contactDbContext, IMapper mapper
 
     public async Task<ContactResponse> GetById(int id)
     {
-        var item = await contactDbContext.ContactItems.FindAsync(id);
-        if (item is null) { throw new("Can't GetById: contact with given Id don't exist"); }
-        return mapper.Map<ContactResponse>(item);
+        var contact = await contactDbContext.ContactItems.FindAsync(id);
+        if (contact is null) { throw new("Can't GetById: contact with given Id don't exist"); }
+        return mapper.Map<ContactResponse>(contact);
     }
 
     public async Task<ContactResponse> Create(AddContactRequest item)

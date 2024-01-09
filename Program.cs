@@ -16,7 +16,7 @@ public static partial class Program
         string connection = builder.Configuration.GetConnectionString("DefaultConnection");
         builder.Services.AddDbContext<ContactDbContext>(options => options.UseNpgsql(connection));
         builder.Services.AddScoped<IContactRepository, ContactRepository>();
-
+        
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddAutoMapper(typeof(ContactMapperProfile));
