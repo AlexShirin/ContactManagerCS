@@ -3,27 +3,33 @@
 using ContactManagerCS.Contracts;
 using ContactManagerCS.Database;
 using ContactManagerCS.Models;
+using ContactManagerCS.Repositories;
 using ContactManagerCS.Validation;
 
 using FluentValidation;
-using FluentValidation.Results;
 
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+namespace ContactManagerCS.Services;
 
-namespace ContactManagerCS.Repositories;
-
-public class ContactRepository(ContactDbContext contactDbContext, IMapper mapper) : IContactRepository
+public class ContactService : IContactService
 {
+    private readonly IContactRepository contactRepository;
+    private readonly IMapper mapper;
+
+    public ContactService(IContactRepository contactRepository, IMapper mapper)
+    {
+        this.contactRepository = contactRepository;
+        this.mapper = mapper;
+    }
+
     public async Task<List<ContactResponse>> GetAll()
     {
-        var contacts = await contactDbContext.ContactItems.ToListAsync();
+        var contacts = await contactRepository.GetAll();
         return mapper.Map<List<ContactResponse>>(contacts);
     }
 
     public async Task<ContactResponse> GetById(int id)
     {
-        var contact = await contactDbContext.ContactItems.FindAsync(id);
+        var contact = await contactRepository.GetById(id);
         if (contact is null) { throw new("Can't GetById: contact with given Id don't exist"); }
         return mapper.Map<ContactResponse>(contact);
     }
@@ -35,11 +41,10 @@ public class ContactRepository(ContactDbContext contactDbContext, IMapper mapper
 
         var contact = mapper.Map<Contact>(item);
 
-        var exists = await contactDbContext.ContactItems.FindAsync(contact.Id);
+        var exists = await contactRepository.GetById(contact.Id);
         if (exists is not null) { throw new("Can't Create: contact with given Id already exists"); }
 
-        contactDbContext.ContactItems.Add(contact);
-        await contactDbContext.SaveChangesAsync();
+        await contactRepository.Create(contact);
 
         return mapper.Map<ContactResponse>(contact);
     }
@@ -51,23 +56,21 @@ public class ContactRepository(ContactDbContext contactDbContext, IMapper mapper
 
         var contact = mapper.Map<Contact>(item);
 
-        var exists = await contactDbContext.ContactItems.FindAsync(contact.Id);
+        var exists = await contactRepository.GetById(contact.Id);
         if (exists is null) { throw new("Can't Update: contact with given Id don't exist"); }
 
-        contactDbContext.ContactItems.Remove(exists);
-        contactDbContext.ContactItems.Add(contact);
-        await contactDbContext.SaveChangesAsync();
+        await contactRepository.Update(exists, contact);
 
         return mapper.Map<ContactResponse>(contact);
     }
 
     public async Task<ContactResponse> DeleteById(int id)
     {
-        var item = await contactDbContext.ContactItems.FindAsync(id);
+        var item = await contactRepository.GetById(id);
         if (item is null) { throw new("Can't Delete: contact with given Id don't exist"); }
 
-        contactDbContext.ContactItems.Remove(item);
-        await contactDbContext.SaveChangesAsync();
+        await contactRepository.Delete(item);
+
         return mapper.Map<ContactResponse>(item);
     }
 }

@@ -2,6 +2,7 @@
 using ContactManagerCS.Database;
 using ContactManagerCS.Models;
 using ContactManagerCS.Repositories;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,15 +11,22 @@ namespace ContactManagerCS.Controllers;
 [ApiController]
 [Route("[controller]")]
 [Produces("application/json")]
-public class ContactController(IContactRepository repo) : ControllerBase
+public class ContactController : ControllerBase
 {
+    private readonly IContactService contactService;
+
+    public ContactController(IContactService contactService)
+    {
+        this.contactService = contactService;
+    }
+
     /// <summary>
     /// Show all contacts
     /// </summary>
     [HttpGet]
     public async Task<List<ContactResponse>> GetAll()
     {
-        return await repo.GetAll();
+        return await contactService.GetAll();
     }
 
     /// <summary>
@@ -27,7 +35,7 @@ public class ContactController(IContactRepository repo) : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<ContactResponse>> GetById(int id)
     {
-        return await repo.GetById(id);
+        return await contactService.GetById(id);
     }
 
     /// <summary>
@@ -36,7 +44,7 @@ public class ContactController(IContactRepository repo) : ControllerBase
     [HttpPost]
     public async Task<ActionResult<ContactResponse>> Create(AddContactRequest item)
     {
-        return await repo.Create(item);
+        return await contactService.Create(item);
     }
 
     /// <summary>
@@ -45,7 +53,7 @@ public class ContactController(IContactRepository repo) : ControllerBase
     [HttpPut]
     public async Task<ActionResult<ContactResponse>> Update(AddContactRequest item)
     {
-        return await repo.Update(item);
+        return await contactService.Update(item);
     }
 
     /// <summary>
@@ -54,6 +62,6 @@ public class ContactController(IContactRepository repo) : ControllerBase
     [HttpDelete("{id}")]
     public async Task<ActionResult<ContactResponse>> DeleteById(int id)
     {
-        return await repo.DeleteById(id);
+        return await contactService.DeleteById(id);
     }
 }

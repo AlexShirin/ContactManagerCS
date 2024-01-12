@@ -1,9 +1,12 @@
+using AutoMapper;
+
+using ContactManagerCS.Contracts;
+using ContactManagerCS.Database;
+using ContactManagerCS.Repositories;
+using ContactManagerCS.Services;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using ContactManagerCS.Database;
-using ContactManagerCS.Contracts;
-using ContactManagerCS.Repositories;
-using AutoMapper;
 
 namespace ContactManagerCS;
 
@@ -14,9 +17,12 @@ public static partial class Program
         var builder = WebApplication.CreateBuilder(args);
 
         string connection = builder.Configuration.GetConnectionString("DefaultConnection");
+
         builder.Services.AddDbContext<ContactDbContext>(options => options.UseNpgsql(connection));
+
         builder.Services.AddScoped<IContactRepository, ContactRepository>();
-        
+        builder.Services.AddScoped<IContactService, ContactService>();
+
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddAutoMapper(typeof(ContactMapperProfile));
