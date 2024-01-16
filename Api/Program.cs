@@ -16,7 +16,7 @@ public static partial class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        string connection = builder.Configuration.GetConnectionString("DefaultConnection");
+        string connection = builder.Configuration.GetConnectionString("DefaultConnection")!;
 
         builder.Services.AddDbContext<ContactDbContext>(options => options.UseNpgsql(connection));
 
@@ -30,7 +30,7 @@ public static partial class Program
         {
             var basePath = AppContext.BaseDirectory;
             var xmlPath = Path.Combine(basePath, "ContactManagerCS.xml");
-            options.IncludeXmlComments(xmlPath);
+            //options.IncludeXmlComments(xmlPath);
 
             options.SwaggerDoc("v1", new OpenApiInfo
             {
