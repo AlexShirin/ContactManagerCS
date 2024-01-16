@@ -1,7 +1,10 @@
 ﻿using AutoMapper;
+
 using ContactManagerCS.Contracts;
+using ContactManagerCS.Exceptions;
 using ContactManagerCS.Models;
 using ContactManagerCS.Validation;
+
 using FluentValidation;
 
 namespace ContactManagerCS.Services;
@@ -26,9 +29,9 @@ public class ContactService : IContactService
     public async Task<ContactResponse> GetById(int id)
     {
         var contact = await _contactRepository.GetById(id);
-        if (contact is null) 
-        { 
-            throw new("Can't GetById: contact with given Id don't exist"); 
+        if (contact is null)
+        {
+            throw new ContactException("Can't GetById: contact with given Id don't exist");
         }
         return _mapper.Map<ContactResponse>(contact);
     }
@@ -41,7 +44,10 @@ public class ContactService : IContactService
         var contact = _mapper.Map<Contact>(item);
 
         var exists = await _contactRepository.GetById(contact.Id);
-        if (exists is not null) { throw new("Can't Create: contact with given Id already exists"); }
+        if (exists is not null) 
+        { 
+            throw new ContactException("Can't Create: contact with given Id already exists"); 
+        }
 
         await _contactRepository.Create(contact);
 
@@ -55,8 +61,8 @@ public class ContactService : IContactService
 
         var contact = _mapper.Map<Contact>(item);
 
-        var exists = await _contactRepository.GetById(contact.Id);
-        if (exists is null) { throw new("Can't Update: contact with given Id don't exist"); }
+        var exists = await _contactRepository.GetById(contact.Id) ??
+            throw new ContactException("Can't Update: contact with given Id don't exist"); 
 
         await _contactRepository.Update(exists, contact);
 
@@ -65,9 +71,8 @@ public class ContactService : IContactService
 
     public async Task<ContactResponse> DeleteById(int id)
     {
-        var item = await _contactRepository.GetById(id);
-        if (item is null) { throw new("Can't Delete: contact with given Id don't exist"); }
-
+        var item = await _contactRepository.GetById(id) ?? 
+            throw new ContactException("Can't Delete: contact with given Id don't exist");
         await _contactRepository.Delete(item);
 
         return _mapper.Map<ContactResponse>(item);
