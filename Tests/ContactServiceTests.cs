@@ -23,6 +23,14 @@ namespace ContactManagerCS.Tests
         private List<Contact> _listContacts;
         private List<ContactResponse> _listContactResponses;
 
+        private int _id;
+        private Contact _contact4;
+        private AddContactRequest _contact4req;
+        private ContactResponse _contact4res;
+        private Contact _contact4u;
+        private AddContactRequest _contact4ureq;
+        private ContactResponse _contact4ures;
+
         public ContactServiceTests()
         {
             var contactMapperProfile = new ContactMapper();
@@ -44,6 +52,14 @@ namespace ContactManagerCS.Tests
                 new ContactResponse { Id = 2, Name = "Bob", Email = "b@a.a", Phone = "22", Work = "B" },
                 new ContactResponse { Id = 3, Name = "Sam", Email = "c@a.a", Phone = "33", Work = "C" },
             ];
+
+            _id = 4;
+            _contact4 = new Contact { Id = 4, Name = "d", Email = "d@d.d", Phone = "44", Work = "D" };
+            _contact4req = new AddContactRequest { Id = 4, Name = "d", Email = "d@d.d", Phone = "44", Work = "D" };
+            _contact4res = new ContactResponse { Id = 4, Name = "d", Email = "d@d.d", Phone = "44", Work = "D" };
+            _contact4u = new Contact { Id = 4, Name = "e", Email = "d@d.d", Phone = "44", Work = "D" };
+            _contact4ureq = new AddContactRequest { Id = 4, Name = "e", Email = "d@d.d", Phone = "44", Work = "D" };
+            _contact4ures = new ContactResponse { Id = 4, Name = "e", Email = "d@d.d", Phone = "44", Work = "D" };
         }
 
         [Fact]
@@ -84,42 +100,75 @@ namespace ContactManagerCS.Tests
         }
 
         [Fact]
-        public async Task CreateUpdateDeleteTest()
+        public async Task CreateValidTest()
         {
-            int id = 4;
-            Contact _contact4 = new Contact { Id = id, Name = "d", Email = "d@d.d", Phone = "44", Work = "D" };
-            var _contact4req = new AddContactRequest { Id = id, Name = "d", Email = "d@d.d", Phone = "44", Work = "D" };
-            var _contact4res = new ContactResponse { Id = id, Name = "d", Email = "d@d.d", Phone = "44", Work = "D" };
-            Contact _contact4u = new Contact { Id = id, Name = "e", Email = "d@d.d", Phone = "44", Work = "D" };
-            var _contact4ureq = new AddContactRequest { Id = id, Name = "e", Email = "d@d.d", Phone = "44", Work = "D" };
-            var _contact4ures = new ContactResponse { Id = id, Name = "e", Email = "d@d.d", Phone = "44", Work = "D" };
-
-            //Create Test
-            _mockRepo.Setup<Contact>(repo => repo.GetById(id).Result).Returns((Contact)null);
+            _mockRepo.Setup<Contact>(repo => repo.GetById(_id).Result).Returns((Contact)null);
             _mockRepo.Setup(repo => repo.Create(_contact4).Result).Returns(_contact4);
             var result1 = await _service.Create(_contact4req);
 
             Assert.NotNull(result1);
             Assert.IsType<ContactResponse>(result1);
             Assert.Equal(_contact4res, result1);
+        }
 
-            //Update Test
-            _mockRepo.Setup<Contact>(repo => repo.GetById(id).Result).Returns(_contact4);
+        [Fact]
+        public async Task CreateNotValidTest()
+        {
+            _mockRepo.Setup<Contact>(repo => repo.GetById(_id).Result).Returns(_contact4);
+            _mockRepo.Setup(repo => repo.Create(_contact4).Result).Returns(_contact4);
+            var ex = await Assert.ThrowsAsync<ContactException>(() => _service.Create(_contact4req));
+
+            Assert.NotNull(ex);
+            Assert.IsType<ContactException>(ex);
+            Assert.Contains("Can't Create: contact with given Id already exists", ex.Message);
+        }
+
+        [Fact]
+        public async Task UpdateValidTest()
+        {
+            _mockRepo.Setup<Contact>(repo => repo.GetById(_id).Result).Returns(_contact4);
             _mockRepo.Setup(repo => repo.Update(_contact4, _contact4u).Result).Returns(_contact4u);
             var result2 = await _service.Update(_contact4ureq);
 
             Assert.NotNull(result2);
             Assert.IsType<ContactResponse>(result2);
             Assert.Equal(_contact4ures, result2);
+        }
 
-            //Delete Test
-            _mockRepo.Setup<Contact>(repo => repo.GetById(id).Result).Returns(_contact4u);
+        [Fact]
+        public async Task UpdateNotValidTest()
+        {
+            _mockRepo.Setup<Contact>(repo => repo.GetById(_id).Result).Returns((Contact)null);
+            _mockRepo.Setup(repo => repo.Update(_contact4, _contact4u).Result).Returns(_contact4u);
+            var ex = await Assert.ThrowsAsync<ContactException>(() => _service.Update(_contact4ureq));
+
+            Assert.NotNull(ex);
+            Assert.IsType<ContactException>(ex);
+            Assert.Contains("Can't Update: contact with given Id don't exist", ex.Message);
+        }
+
+        [Fact]
+        public async Task DeleteValidTest()
+        {
+            _mockRepo.Setup<Contact>(repo => repo.GetById(_id).Result).Returns(_contact4u);
             _mockRepo.Setup(repo => repo.Delete(_contact4u).Result).Returns(_contact4u);
-            var result3 = await _service.DeleteById(id);
+            var result3 = await _service.DeleteById(_id);
 
             Assert.NotNull(result3);
             Assert.IsType<ContactResponse>(result3);
             Assert.Equal(_contact4ures, result3);
+        }
+
+        [Fact]
+        public async Task DeleteNotValidTest()
+        {
+            _mockRepo.Setup<Contact>(repo => repo.GetById(_id).Result).Returns((Contact)null);
+            _mockRepo.Setup(repo => repo.Delete(_contact4u).Result).Returns(_contact4u);
+            var ex = await Assert.ThrowsAsync<ContactException>(() => _service.DeleteById(_id));
+
+            Assert.NotNull(ex);
+            Assert.IsType<ContactException>(ex);
+            Assert.Contains("Can't Delete: contact with given Id don't exist", ex.Message);
         }
     }
 }
