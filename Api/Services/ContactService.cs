@@ -1,10 +1,8 @@
-﻿using AutoMapper;
-
-using ContactManagerCS.Contracts;
+﻿using ContactManagerCS.Contracts;
 using ContactManagerCS.Exceptions;
 using ContactManagerCS.Models;
 using ContactManagerCS.Validation;
-
+using AutoMapper;
 using FluentValidation;
 
 namespace ContactManagerCS.Services;
