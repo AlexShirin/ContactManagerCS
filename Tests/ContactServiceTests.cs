@@ -46,7 +46,7 @@ namespace ContactManagerCS.Tests
             ];
         }
 
-        [Fact/*(Skip = "add contact mapper later")*/]
+        [Fact]
         public async Task GetAllTest()
         {
             _mockRepo.Setup(repo => repo.GetAll().Result).Returns(_listContacts);
@@ -57,12 +57,12 @@ namespace ContactManagerCS.Tests
             Assert.Equal(3, result.Count);
         }
 
-        [Fact/*(Skip = "add contact mapper later")*/]
+        [Fact]
         public async Task GetByIdValidTest()
         {
             int id = 1;
             _mockRepo.Setup<Contact>(repo => repo.GetById(id).Result).Returns(_listContacts.ElementAt(id - 1));
-            var result = _service.GetById(id).Result;
+            var result = await _service.GetById(id);
 
             Assert.NotNull(result);
             Assert.IsType<ContactResponse>(result);
@@ -71,7 +71,7 @@ namespace ContactManagerCS.Tests
             //Assert.True(_listContactResponses.ElementAt(id - 1).Equals(result));
         }
 
-        [Fact/*(Skip = "add contact mapper later")*/]
+        [Fact]
         public async Task GetByIdNotValidTest()
         {
             int id = 4;
@@ -83,84 +83,43 @@ namespace ContactManagerCS.Tests
             Assert.Contains("Can't GetById: contact with given Id don't exist", ex.Message);
         }
 
-        [Fact(Skip = "add contact mapper later")]
+        [Fact]
         public async Task CreateUpdateDeleteTest()
         {
-            //int id = 4;
-            //Contact _contact = new Contact { Id = id, Name = "d", Email = "d@d.d", Phone = "44", Work = "D" };
-            //Contact _contact2 = new Contact { Id = id, Name = "e", Email = "d@d.d", Phone = "44", Work = "D" };
+            int id = 4;
+            Contact _contact4 = new Contact { Id = id, Name = "d", Email = "d@d.d", Phone = "44", Work = "D" };
+            var _contact4req = new AddContactRequest { Id = id, Name = "d", Email = "d@d.d", Phone = "44", Work = "D" };
+            var _contact4res = new ContactResponse { Id = id, Name = "d", Email = "d@d.d", Phone = "44", Work = "D" };
+            Contact _contact4u = new Contact { Id = id, Name = "e", Email = "d@d.d", Phone = "44", Work = "D" };
+            var _contact4ureq = new AddContactRequest { Id = id, Name = "e", Email = "d@d.d", Phone = "44", Work = "D" };
+            var _contact4ures = new ContactResponse { Id = id, Name = "e", Email = "d@d.d", Phone = "44", Work = "D" };
 
-            ////Create Test
-            //_mockRepo
-            //    .Setup(repo => repo.Create(_contact).Result)
-            //    .Returns(_contact);
-            ////_listContacts.Add(_contact);
-            //var result1 = _controller.Create(_contact).Result.Value;
+            //Create Test
+            _mockRepo.Setup<Contact>(repo => repo.GetById(id).Result).Returns((Contact)null);
+            _mockRepo.Setup(repo => repo.Create(_contact4).Result).Returns(_contact4);
+            var result1 = await _service.Create(_contact4req);
 
-            //Assert.NotNull(result1);
-            //Assert.IsType<Contact>(result1);
-            //Assert.Equal(_contact, result1);
+            Assert.NotNull(result1);
+            Assert.IsType<ContactResponse>(result1);
+            Assert.Equal(_contact4res, result1);
 
-            ////Update Test
-            //_mockRepo
-            //    .Setup(repo => repo.Update(_contact2).Result)
-            //    .Returns(_contact2);
-            ////_listContacts[id].Name = _contact2.Name;
-            //var result2 = _controller.Update(_contact2).Result.Value;
+            //Update Test
+            _mockRepo.Setup<Contact>(repo => repo.GetById(id).Result).Returns(_contact4);
+            _mockRepo.Setup(repo => repo.Update(_contact4, _contact4u).Result).Returns(_contact4u);
+            var result2 = await _service.Update(_contact4ureq);
 
-            //Assert.NotNull(result2);
-            //Assert.IsType<Contact>(result2);
-            //Assert.Equal(_contact2, result2);
+            Assert.NotNull(result2);
+            Assert.IsType<ContactResponse>(result2);
+            Assert.Equal(_contact4ures, result2);
 
-            ////Delete Test
-            //_mockRepo
-            //    .Setup(repo => repo.DeleteById(id).Result)
-            //    .Returns(_contact2);
-            //var result3 = _controller.DeleteById(id).Result.Value;
+            //Delete Test
+            _mockRepo.Setup<Contact>(repo => repo.GetById(id).Result).Returns(_contact4u);
+            _mockRepo.Setup(repo => repo.Delete(_contact4u).Result).Returns(_contact4u);
+            var result3 = await _service.DeleteById(id);
 
-            //Assert.NotNull(result3);
-            //Assert.IsType<Contact>(result3);
-            //Assert.Equal(_contact2, result3);
+            Assert.NotNull(result3);
+            Assert.IsType<ContactResponse>(result3);
+            Assert.Equal(_contact4ures, result3);
         }
-
-        //// Arrange
-        //ContactController controller = new();
-
-        //// Act
-        //List<Contact> result = controller.GetAll() as List<Contact>;
-
-        //// Assert
-        //Assert.Equal("Hello world!", result?.ViewData["Message"]);
-
-        // Arrange
-        //var mock = new Mock<ContactDbContext>();
-        //mock.Setup(repo => repo.ContactItems.ToListAsync()).Returns(GetTestContacts());
-        //var controller = new ContactController(mock.Object);
-
-        //var mockContactItems = new Mock<DbSet<Contact>>();
-        ////mockContactItems.Setup(ci => ci.ToListAsync().Result).Returns(GetTestContacts());
-        //var mockContext = new Mock<ContactDbContext>();
-        ////mockContext.Setup(c => c.ContactItems).Returns(mockContactItems.Object);
-        //var mockController = new Mock<ContactController>(mockContext.Object);
-        //mockController.Setup(c => c.GetAll().Result).Returns(GetTestContacts());
-
-        ////Act
-        //var result = mockController.Object.GetAll().Result;
-
-        ////Assert
-        //var viewResult = Assert.IsType<ViewResult>(result);
-        //var model = Assert.IsAssignableFrom<IEnumerable<Contact>>(viewResult.Model);
-        //Assert.Equal(GetTestContacts().Count, model.Count());
-
-        //private List<Contact> GetTestContacts()
-        //{
-        //    var users = new List<Contact>
-        //        {
-        //        new Contact { Id = 1, Name = "Tom", Email = "a@a.a", Phone = "11", Work = "A" },
-        //        new Contact { Id = 2, Name = "Bob", Email = "b@a.a", Phone = "22", Work = "B" },
-        //        new Contact { Id = 3, Name = "Sam", Email = "c@a.a", Phone = "33", Work = "C" }
-        //        };
-        //    return users;
-        //}
     }
 }
