@@ -3,11 +3,13 @@ using AutoMapper;
 using ContactManagerCS.Contracts;
 using ContactManagerCS.Controllers;
 using ContactManagerCS.Database;
+using ContactManagerCS.Exceptions;
 using ContactManagerCS.Models;
 using ContactManagerCS.Services;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 
 using Moq;
 
@@ -56,15 +58,29 @@ namespace ContactManagerCS.Tests
         }
 
         [Fact/*(Skip = "add contact mapper later")*/]
-        public async Task GetByIdTest()
+        public async Task GetByIdValidTest()
         {
-            //int id = 1;
-            //_mockRepo.Setup(repo => repo.GetById(id).Result).Returns(_listContacts.ElementAt(id));
-            //var result = _service.GetById(id).Result.Value;
+            int id = 1;
+            _mockRepo.Setup<Contact>(repo => repo.GetById(id).Result).Returns(_listContacts.ElementAt(id - 1));
+            var result = _service.GetById(id).Result;
 
-            //Assert.NotNull(result);
-            //Assert.IsType<ContactResponse>(result);
-            //Assert.Equal(_listContacts.ElementAt(id), result);
+            Assert.NotNull(result);
+            Assert.IsType<ContactResponse>(result);
+            Assert.Equal(_listContactResponses.ElementAt(id - 1), result);
+            //Assert.Equal(_listContactResponses.ElementAt(id-1).Id, result.Id);
+            //Assert.True(_listContactResponses.ElementAt(id - 1).Equals(result));
+        }
+
+        [Fact/*(Skip = "add contact mapper later")*/]
+        public async Task GetByIdNotValidTest()
+        {
+            int id = 4;
+            _mockRepo.Setup<Contact>(repo => repo.GetById(id).Result).Returns((Contact)null);
+            var ex = await Assert.ThrowsAsync<ContactException>(() => _service.GetById(id));
+
+            Assert.NotNull(ex);
+            Assert.IsType<ContactException>(ex);
+            Assert.Contains("Can't GetById: contact with given Id don't exist", ex.Message);
         }
 
         [Fact(Skip = "add contact mapper later")]
