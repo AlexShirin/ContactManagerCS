@@ -59,11 +59,12 @@ public class ContactServiceTests
         _contact4ures = new ContactResponse { Id = 4, Name = "e", Email = "d@d.d", Phone = "44", Work = "D" };
     }
 
-    [Fact]
-    public async Task GetAllTest()
+    [Theory]
+    [MemberData(nameof(ContactTestsHelper.GetListOfContacts), MemberType = typeof(ContactTestsHelper))]
+    public async Task GetAllTest(List<Contact> listContacts)
     {
         //Arrange
-        _mockRepo.Setup(repo => repo.GetAll().Result).Returns(_listContacts);
+        _mockRepo.Setup(repo => repo.GetAll().Result).Returns(listContacts);
 
         //Act
         var result = await _contactService.GetAll();
@@ -71,11 +72,11 @@ public class ContactServiceTests
         //Assert
         Assert.NotNull(result);
         Assert.IsType<List<ContactResponse>>(result);
-        Assert.Equal(3, result.Count);
+        Assert.Equal(listContacts.Count, result.Count);
     }
 
     [Theory]
-    [MemberData(nameof(ContactTestsHelper.contactIdValid), MemberType = typeof(ContactTestsHelper))]
+    [MemberData(nameof(ContactTestsHelper.GetValidContactIds), MemberType = typeof(ContactTestsHelper))]
     public async Task GetByIdValidTest(int id)
     {
         //Arrange
@@ -91,7 +92,7 @@ public class ContactServiceTests
     }
 
     [Theory]
-    [MemberData(nameof(ContactTestsHelper.contactIdNotValid), MemberType = typeof(ContactTestsHelper))]
+    [MemberData(nameof(ContactTestsHelper.GetNotValidContactIds), MemberType = typeof(ContactTestsHelper))]
     public async Task GetByIdNotValidTest(int id)
     {
         //Arrange
