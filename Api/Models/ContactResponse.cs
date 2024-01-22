@@ -13,6 +13,15 @@ public class ContactResponse
         Id = id; Name = name; Email = email; Phone = phone; Work = work;
     }
 
+    public ContactResponse(Contact contact)
+    {
+        Id = contact.Id;
+        Name = contact.Name;
+        Email = contact.Email;
+        Phone = contact.Phone;
+        Work = contact.Work;
+    }
+
     public static ContactResponse Empty()
     {
         return new ContactResponse(0, "", "", "", "");

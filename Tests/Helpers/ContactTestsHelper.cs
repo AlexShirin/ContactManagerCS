@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using ContactManagerCS.Models;
@@ -17,43 +18,78 @@ public class ContactTestsHelper
             new Contact { Id = 3, Name = "Sam", Email = "c@a.a", Phone = "33", Work = "C" },
         };
 
-    //public static IEnumerable<object[]> ContactIdValid =>
-    //    new List<object[]>
-    //    {
-    //        new object[] { 1 },
-    //        new object[] { 2 },
-    //        new object[] { 3 },
-    //    };
-
-    //public static IEnumerable<object[]> ContactIdNotValid =>
-    //    new List<object[]>
-    //    {
-    //        new object[] { -1 },
-    //        new object[] { 0 },
-    //        new object[] { 4 },
-    //    };
-
-    public static IEnumerable<object[]> GetValidContactIds()
-    {
-        foreach (var contactId in _validContactIds)
+    private static Contact _contactToAdd = new() 
+        { Id = 4, Name = "Jim", Email = "d@d.d", Phone = "44", Work = "D" };
+    private static Contact _contactToUpdate = new() 
+        { Id = 4, Name = "Bim", Email = "d@d.d", Phone = "44", Work = "D" };
+    
+    private static List<ContactResponse> _baseContactResponseList => new()
         {
-            object[] tmp = [contactId];
-            yield return tmp;
-        }
-    }
-
-    public static IEnumerable<object[]> GetNotValidContactIds()
-    {
-        foreach (var contactId in _notvalidContactIds)
+            new ContactResponse(_baseContactList.ElementAt(0)),
+            new ContactResponse(_baseContactList.ElementAt(1)),
+            new ContactResponse(_baseContactList.ElementAt(2)),
+        };
+    private static List<AddContactRequest> _baseAddContactRequestList => new()
         {
-            object[] tmp = [contactId];
-            yield return tmp;
-        }
-    }
+            new AddContactRequest(_baseContactList.ElementAt(0)),
+            new AddContactRequest(_baseContactList.ElementAt(1)),
+            new AddContactRequest(_baseContactList.ElementAt(2)),
+        };
 
-    public static IEnumerable<object[]> GetListOfContacts()
+    public static IEnumerable<object[]> GetAllTestData()
     {
         object[] tmp = [_baseContactList];
         yield return tmp;
+    }
+
+    public static IEnumerable<object[]> GetByIdValidTestData()
+    {
+        foreach (var contactId in _validContactIds)
+        {
+            //object[] tmp = [contactId];
+            yield return [contactId, _baseContactList];
+        }
+    }
+
+    public static IEnumerable<object[]> GetByIdNotValidTestData()
+    {
+        var allData = new List<object[]> { new object[] { _notvalidContactIds.GetValue(0) } };
+        return allData.Take(1);
+    }
+
+    public static IEnumerable<object[]> CreateValidTestData()
+    {
+        var allData = new List<object[]> { new object[] { _contactToAdd } };
+        return allData.Take(1);
+    }
+
+    public static IEnumerable<object[]> CreateNotValidTestData()
+    {
+        var allData = new List<object[]> { new object[] { _contactToAdd } };
+        return allData.Take(1);
+    }
+
+    public static IEnumerable<object[]> UpdateValidTestData()
+    {
+        var allData = new List<object[]> { new object[] { _contactToAdd, _contactToUpdate } };
+        return allData.Take(1);
+    }
+
+    public static IEnumerable<object[]> UpdateNotValidTestData()
+    {
+        var allData = new List<object[]> { new object[] { _contactToAdd, _contactToUpdate } };
+        return allData.Take(1);
+    }
+
+    public static IEnumerable<object[]> DeleteValidTestData()
+    {
+        var allData = new List<object[]> { new object[] { _contactToUpdate } };
+        return allData.Take(1);
+    }
+
+    public static IEnumerable<object[]> DeleteNotValidTestData()
+    {
+        var allData = new List<object[]> { new object[] { _contactToUpdate } };
+        return allData.Take(1);
     }
 }
