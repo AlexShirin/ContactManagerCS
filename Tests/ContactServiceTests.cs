@@ -95,12 +95,11 @@ public class ContactServiceTests
         //Arrange
         var addContactRequest = new AddContactRequest { Id = id, Name = name, Email = email, Phone = phone, Work = work };
         var addContact = new Contact { Id = (id == null ? 0 : id.Value), Name = name, Email = email, Phone = phone, Work = work };
-        var addContactResponse = new ContactResponse { Id = (id == null ? 0 : id.Value), Name = name, Email = email, Phone = phone, Work = work };
         ContactResponse result = null;
         Exception ex = null;
 
         _mockRepo.Setup(repo => repo.GetById(It.IsAny<int>())).ReturnsAsync((Contact)null);
-        _mockRepo.Setup(repo => repo.Create(addContact).Result).Returns(addContact);
+        _mockRepo.Setup(repo => repo.Create(addContact)).ReturnsAsync(addContact);
 
         //Act
         if (!valid)
@@ -137,7 +136,6 @@ public class ContactServiceTests
         //Arrange
         var contact = ContactHelper.BaseContactList.ElementAt(0);
         _mockRepo.Setup(repo => repo.GetById(It.IsAny<int>()).Result).Returns(contact);
-        _mockRepo.Setup(repo => repo.Create(contact).Result).Returns(contact);
 
         //Act
         var exception = await Assert.ThrowsAsync<ContactException>(
@@ -206,9 +204,6 @@ public class ContactServiceTests
     {
         //Arrange
         _mockRepo.Setup(repo => repo.GetById(It.IsAny<int>()).Result).Returns((Contact)null);
-        _mockRepo.Setup(repo => repo
-            .Update(ContactHelper.ContactToAdd, ContactHelper.ContactToUpdate).Result)
-            .Returns(ContactHelper.ContactToUpdate);
 
         //Act
         var exception = await Assert.ThrowsAsync<ContactException>(
@@ -247,7 +242,6 @@ public class ContactServiceTests
         //Arrange
         var contact = ContactHelper.BaseContactList.ElementAt(0);
         _mockRepo.Setup(repo => repo.GetById(It.IsAny<int>()).Result).Returns((Contact)null);
-        _mockRepo.Setup(repo => repo.Delete(contact).Result).Returns(contact);
 
         //Act
         var exception = await Assert.ThrowsAsync<ContactException>(
