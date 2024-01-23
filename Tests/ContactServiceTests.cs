@@ -1,10 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-
 using AutoMapper;
 
 using ContactManagerCS.Contracts;
@@ -95,10 +88,10 @@ public class ContactServiceTests
         int? id, string name, string email, string phone, string work, bool valid, string errorMessage)
     {
         //Arrange
-        var addContactRequest = new AddContactRequest { Id = id, Name = name, Email = email, Phone = phone, Work = work };
+        var addContactRequest = new AddContactRequest { Id = (id == null ? 0 : id.Value), Name = name, Email = email, Phone = phone, Work = work };
         var addContact = new Contact { Id = (id == null ? 0 : id.Value), Name = name, Email = email, Phone = phone, Work = work };
-        ContactResponse result = null;
-        Exception ex = null;
+        ContactResponse? result = null;
+        Exception? ex = null;
 
         _mockRepo.Setup(repo => repo.GetById(It.IsAny<int>())).ReturnsAsync((Contact)null);
         _mockRepo.Setup(repo => repo.Create(addContact)).ReturnsAsync(addContact);
@@ -161,7 +154,7 @@ public class ContactServiceTests
         int? id, string name, string email, string phone, string work, bool valid, string errorMessage)
     {
         //Arrange
-        var addContactRequest = new AddContactRequest { Id = id, Name = name, Email = email, Phone = phone, Work = work };
+        var addContactRequest = new AddContactRequest { Id = (id == null ? 0 : id.Value), Name = name, Email = email, Phone = phone, Work = work };
         var addContact = new Contact { Id = (id == null ? 0 : id.Value), Name = name, Email = email, Phone = phone, Work = work };
         var updateContact = ContactHelper.ContactToUpdate;
         var updateContactRequest = _mapper.Map<AddContactRequest>(updateContact);
