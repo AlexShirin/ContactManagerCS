@@ -12,13 +12,4 @@ public class AddContactRequest
     {
         Id = id; Name = name; Email = email; Phone = phone; Work = work;
     }
-
-    public AddContactRequest(Contact contact)
-    {
-        Id = contact.Id;
-        Name = contact.Name;
-        Email = contact.Email;
-        Phone = contact.Phone;
-        Work = contact.Work;
-    }
 }

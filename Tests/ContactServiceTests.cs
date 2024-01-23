@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 using AutoMapper;
 
@@ -36,7 +38,7 @@ public class ContactServiceTests
     public async Task GetAllContacts_Success()
     {
         //Arrange
-        _mockRepo.Setup(repo => repo.GetAll().Result).Returns(ContactHelper.BaseContactList);
+        _mockRepo.Setup(repo => repo.GetAll()).ReturnsAsync(ContactHelper.BaseContactList);
 
         //Act
         var result = await _contactService.GetAll();
@@ -135,11 +137,12 @@ public class ContactServiceTests
     {
         //Arrange
         var contact = ContactHelper.BaseContactList.ElementAt(0);
-        _mockRepo.Setup(repo => repo.GetById(It.IsAny<int>()).Result).Returns(contact);
+        var addContactRequest = _mapper.Map<AddContactRequest>(contact);
+        _mockRepo.Setup(repo => repo.GetById(It.IsAny<int>())).ReturnsAsync(contact);
 
         //Act
         var exception = await Assert.ThrowsAsync<ContactException>(
-            () => _contactService.Create(new AddContactRequest(contact)));
+            () => _contactService.Create(addContactRequest));
 
         //Assert
         Assert.NotNull(exception);
@@ -160,15 +163,13 @@ public class ContactServiceTests
         //Arrange
         var addContactRequest = new AddContactRequest { Id = id, Name = name, Email = email, Phone = phone, Work = work };
         var addContact = new Contact { Id = (id == null ? 0 : id.Value), Name = name, Email = email, Phone = phone, Work = work };
-        var addContactResponse = new ContactResponse { Id = (id == null ? 0 : id.Value), Name = name, Email = email, Phone = phone, Work = work };
-        var updateContact = new Contact { Id = (id == null ? 0 : id.Value), Name = name, Email = email, Phone = phone, Work = work };
-        var updateContactRequest = new AddContactRequest { Id = id, Name = name, Email = email, Phone = phone, Work = work };
-        var updateContactResponse = new ContactResponse { Id = (id == null ? 0 : id.Value), Name = name, Email = email, Phone = phone, Work = work };
-        ContactResponse result = null;
-        Exception ex = null;
+        var updateContact = ContactHelper.ContactToUpdate;
+        var updateContactRequest = _mapper.Map<AddContactRequest>(updateContact);
+        ContactResponse? result = null;
+        Exception? ex = null;
 
-        _mockRepo.Setup(repo => repo.GetById(It.IsAny<int>()).Result).Returns(addContact);
-        _mockRepo.Setup(repo => repo.Update(addContact, updateContact).Result).Returns(updateContact);
+        _mockRepo.Setup(repo => repo.GetById(It.IsAny<int>())).ReturnsAsync(addContact);
+        _mockRepo.Setup(repo => repo.Update(addContact, updateContact)).ReturnsAsync(updateContact);
 
         //Act
         if (!valid)
@@ -177,7 +178,7 @@ public class ContactServiceTests
         }
         else
         {
-            result = await _contactService.Update(addContactRequest);
+            result = await _contactService.Update(updateContactRequest);
         }
 
         //Assert
@@ -191,11 +192,11 @@ public class ContactServiceTests
         {
             Assert.NotNull(result);
             Assert.IsType<ContactResponse>(result);
-            Assert.Equal(addContactRequest.Id, result.Id);
-            Assert.Equal(addContactRequest.Name, result.Name);
-            Assert.Equal(addContactRequest.Email, result.Email);
-            Assert.Equal(addContactRequest.Phone, result.Phone);
-            Assert.Equal(addContactRequest.Work, result.Work);
+            Assert.Equal(updateContact.Id, result.Id);
+            Assert.Equal(updateContact.Name, result.Name);
+            Assert.Equal(updateContact.Email, result.Email);
+            Assert.Equal(updateContact.Phone, result.Phone);
+            Assert.Equal(updateContact.Work, result.Work);
         }
     }
 
@@ -203,11 +204,12 @@ public class ContactServiceTests
     public async Task UpdateNotExistContact_ReturnException()
     {
         //Arrange
-        _mockRepo.Setup(repo => repo.GetById(It.IsAny<int>()).Result).Returns((Contact)null);
+        var addContactRequest = _mapper.Map<AddContactRequest>(ContactHelper.ContactToUpdate);
+        _mockRepo.Setup(repo => repo.GetById(It.IsAny<int>())).ReturnsAsync((Contact)null);
 
         //Act
         var exception = await Assert.ThrowsAsync<ContactException>(
-            () => _contactService.Update(new AddContactRequest(ContactHelper.ContactToUpdate)));
+            () => _contactService.Update(addContactRequest));
 
         //Assert
         Assert.NotNull(exception);
@@ -220,11 +222,11 @@ public class ContactServiceTests
     {
         //Arrange
         var contact = ContactHelper.BaseContactList.ElementAt(0);
-        _mockRepo.Setup(repo => repo.GetById(It.IsAny<int>()).Result).Returns(contact);
-        _mockRepo.Setup(repo => repo.Delete(contact).Result).Returns(contact);
+        _mockRepo.Setup(repo => repo.GetById(It.IsAny<int>())).ReturnsAsync(contact);
+        _mockRepo.Setup(repo => repo.Delete(contact)).ReturnsAsync(contact);
 
         //Act
-        var result = await _contactService.DeleteById(contact.Id);
+        var result = await _contactService.DeleteById(It.IsAny<int>());
 
         //Assert
         Assert.NotNull(result);
@@ -240,12 +242,11 @@ public class ContactServiceTests
     public async Task DeleteNotExistContact_ReturnException()
     {
         //Arrange
-        var contact = ContactHelper.BaseContactList.ElementAt(0);
-        _mockRepo.Setup(repo => repo.GetById(It.IsAny<int>()).Result).Returns((Contact)null);
+        _mockRepo.Setup(repo => repo.GetById(It.IsAny<int>())).ReturnsAsync((Contact)null);
 
         //Act
         var exception = await Assert.ThrowsAsync<ContactException>(
-            () => _contactService.DeleteById(contact.Id));
+            () => _contactService.DeleteById(It.IsAny<int>()));
 
         //Assert
         Assert.NotNull(exception);

@@ -7,38 +7,4 @@ public class ContactResponse
     public string? Email { get; set; }
     public string? Phone { get; set; }
     public string? Work { get; set; }
-
-    public ContactResponse(int id = 0, string name = "", string email = "", string phone = "", string? work = "")
-    {
-        Id = id; Name = name; Email = email; Phone = phone; Work = work;
-    }
-
-    public ContactResponse(Contact contact)
-    {
-        Id = contact.Id;
-        Name = contact.Name;
-        Email = contact.Email;
-        Phone = contact.Phone;
-        Work = contact.Work;
-    }
-
-    public static ContactResponse Empty()
-    {
-        return new ContactResponse(0, "", "", "", "");
-    }
-
-    public override bool Equals(object? obj)
-    {
-        return obj is ContactResponse response &&
-               Id == response.Id &&
-               Name == response.Name &&
-               Email == response.Email &&
-               Phone == response.Phone &&
-               Work == response.Work;
-    }
-
-    public override int GetHashCode()
-    {
-        return HashCode.Combine(Id, Name, Email, Phone, Work);
-    }
 }

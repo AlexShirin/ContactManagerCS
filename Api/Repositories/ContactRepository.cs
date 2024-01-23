@@ -33,11 +33,11 @@ public class ContactRepository : IContactRepository
 
     public async Task<Contact> Update(Contact exists, Contact contact)
     {
-        exists.Id = contact.Id;
-        exists.Name = contact.Name;
-        exists.Email = contact.Email;
-        exists.Phone = contact.Phone;
-        exists.Work = contact.Work;
+        //exists.Id = contact.Id;
+        //exists.Name = contact.Name;
+        //exists.Email = contact.Email;
+        //exists.Phone = contact.Phone;
+        //exists.Work = contact.Work;
         _contactDbContext.ContactItems.Update(contact);
         await _contactDbContext.SaveChangesAsync();
         return contact;
