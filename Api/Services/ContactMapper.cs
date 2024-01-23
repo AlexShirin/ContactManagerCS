@@ -8,7 +8,7 @@ namespace ContactManagerCS.Services
     {
         public ContactMapper()
         {
-            CreateMap<AddContactRequest, Contact>();
+            CreateMap<AddContactRequest, Contact>().ReverseMap();
             CreateMap<Contact, ContactResponse>();
         }
     }
