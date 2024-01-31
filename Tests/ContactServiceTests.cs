@@ -1,3 +1,6 @@
+using System.Numerics;
+using System.Xml.Linq;
+
 using AutoMapper;
 
 using ContactManagerCS.Contracts;
@@ -38,7 +41,7 @@ public class ContactServiceTests
 
         //Assert
         Assert.NotNull(result);
-        Assert.IsType<List<ContactResponse>>(result);
+        Assert.IsType<List<GetAllContactResponse>>(result);
         Assert.Equal(ContactHelper.BaseContactList.Count, result.Count);
     }
 
@@ -54,12 +57,12 @@ public class ContactServiceTests
 
         //Assert
         Assert.NotNull(result);
-        Assert.IsType<ContactResponse>(result);
+        Assert.IsType<GetByIdContactResponse>(result);
         Assert.Equal(contact.Id, result.Id);
         Assert.Equal(contact.Name, result.Name);
         Assert.Equal(contact.Email, result.Email);
         Assert.Equal(contact.Phone, result.Phone);
-        Assert.Equal(contact.Work, result.Work);
+        Assert.Equal(contact.Company, result.Company);
     }
 
     [Fact]
@@ -78,32 +81,36 @@ public class ContactServiceTests
     }
 
     [Theory]
-    [InlineData(null, "", "", "", "", false, "Please specify a unique id")]
-    [InlineData(1, null, "", "", "", false, "Please specify a non-empty name")]
-    [InlineData(1, "", null, "", "", false, "Please specify a non-empty email")]
-    [InlineData(1, "", "", null, "", false, "Please specify a non-empty phone")]
-    [InlineData(1, "", "", "", null, false, "Please specify a non-empty work name")]
-    [InlineData(3, "Jim", "d@d.d", "44", "D", true, "")]
+    [InlineData(null, "e@e.e", "7", "", false, "Please specify a non-empty name")]
+    [InlineData("1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890a", "e@e.e", "", "", false, "Name length is 100 symbols max")]
+    [InlineData("n", null, "7", "", false, "Please specify a non-empty email")]
+    [InlineData("n", "e", "7", "", false, "Email must be valid e-mail address")]
+    [InlineData("n", "1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890e@e.e", "7", "", false, "Email length is 100 symbols max")]
+    [InlineData("n", "e@e.e", null, "", false, "Please specify a non-empty phone")]
+    [InlineData("n", "e@e.e", "p", "", false, "Phone must contain only digits [0-9]")]
+    [InlineData("n", "e@e.e", "123456789012345678901234567890123", "", false, "Phone length is 32 digits max")]
+    [InlineData("n", "e@e.e", "7", "1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890a", false, "Company length is 100 symbols max")]
+    [InlineData("Jim", "d@d.d", "777", "D", true, "")]
     public async Task CreateValidationFailWithExceptionAndSuccessfulCreate(
-        int? id, string name, string email, string phone, string work, bool valid, string errorMessage)
+        string name, string email, string phone, string company, bool valid, string errorMessage)
     {
         //Arrange
-        var addContactRequest = new AddContactRequest { Id = (id == null ? 0 : id.Value), Name = name, Email = email, Phone = phone, Work = work };
-        var addContact = new Contact { Id = (id == null ? 0 : id.Value), Name = name, Email = email, Phone = phone, Work = work };
-        ContactResponse? result = null;
+        var createContactRequest = new CreateContactRequest { Name = name, Email = email, Phone = phone, Company = company };
+        var createContact = new Contact { Name = name, Email = email, Phone = phone, Company = company };
+        CreateContactResponse? result = null;
         Exception? ex = null;
 
         _mockRepo.Setup(repo => repo.GetById(It.IsAny<int>())).ReturnsAsync((Contact)null);
-        _mockRepo.Setup(repo => repo.Create(addContact)).ReturnsAsync(addContact);
+        _mockRepo.Setup(repo => repo.Create(createContact)).ReturnsAsync(createContact);
 
         //Act
         if (!valid)
         {
-            ex = await Assert.ThrowsAsync<ValidationException>(() => _contactService.Create(addContactRequest));
+            ex = await Assert.ThrowsAsync<ValidationException>(() => _contactService.Create(createContactRequest));
         }
         else
         {
-            result = await _contactService.Create(addContactRequest);
+            result = await _contactService.Create(createContactRequest);
         }
 
         //Assert
@@ -116,12 +123,11 @@ public class ContactServiceTests
         else
         {
             Assert.NotNull(result);
-            Assert.IsType<ContactResponse>(result);
-            Assert.Equal(addContactRequest.Id, result.Id);
-            Assert.Equal(addContactRequest.Name, result.Name);
-            Assert.Equal(addContactRequest.Email, result.Email);
-            Assert.Equal(addContactRequest.Phone, result.Phone);
-            Assert.Equal(addContactRequest.Work, result.Work);
+            Assert.IsType<CreateContactResponse>(result);
+            Assert.Equal(createContactRequest.Name, result.Name);
+            Assert.Equal(createContactRequest.Email, result.Email);
+            Assert.Equal(createContactRequest.Phone, result.Phone);
+            Assert.Equal(createContactRequest.Company, result.Company);
         }
     }
 
@@ -130,7 +136,7 @@ public class ContactServiceTests
     {
         //Arrange
         var contact = ContactHelper.BaseContactList.ElementAt(0);
-        var addContactRequest = _mapper.Map<AddContactRequest>(contact);
+        var addContactRequest = _mapper.Map<CreateContactRequest>(contact);
         _mockRepo.Setup(repo => repo.GetById(It.IsAny<int>())).ReturnsAsync(contact);
 
         //Act
@@ -144,30 +150,33 @@ public class ContactServiceTests
     }
 
     [Theory]
-    [InlineData(null, "", "", "", "", false, "Please specify a unique id")]
-    [InlineData(1, null, "", "", "", false, "Please specify a non-empty name")]
-    [InlineData(1, "", null, "", "", false, "Please specify a non-empty email")]
-    [InlineData(1, "", "", null, "", false, "Please specify a non-empty phone")]
-    [InlineData(1, "", "", "", null, false, "Please specify a non-empty work name")]
-    [InlineData(3, "Jim", "d@d.d", "44", "D", true, "")]
+    [InlineData(0, "n", "e@e.e", "7", "", false, "Id must be positive integer")]
+    [InlineData(1, null, "e@e.e", "7", "", false, "Please specify a non-empty name")]
+    [InlineData(1, "1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890a", "e@e.e", "", "", false, "Name length is 100 symbols max")]
+    [InlineData(1, "n", null, "7", "", false, "Please specify a non-empty email")]
+    [InlineData(1, "n", "@.", "7", "", false, "Email must be valid e-mail address")]
+    [InlineData(1, "n", "1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890e@e.e", "7", "", false, "Email length is 100 symbols max")]
+    [InlineData(1, "n", "e@e.e", null, "", false, "Please specify a non-empty phone")]
+    [InlineData(1, "n", "e@e.e", "p", "", false, "Phone must contain only digits [0-9]")]
+    [InlineData(1, "n", "e@e.e", "123456789012345678901234567890123", "", false, "Phone length is 32 digits max")]
+    [InlineData(1, "n", "e@e.e", "7", "1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890a", false, "Company length is 100 symbols max")]
+    [InlineData(4, "Jim", "d@d.d", "777", "D", true, "")]
     public async Task UpdateValidationFailWithExceptionAndSuccessfulUpdate(
-        int? id, string name, string email, string phone, string work, bool valid, string errorMessage)
+        int id, string name, string email, string phone, string work, bool valid, string errorMessage)
     {
         //Arrange
-        var addContactRequest = new AddContactRequest { Id = (id == null ? 0 : id.Value), Name = name, Email = email, Phone = phone, Work = work };
-        var addContact = new Contact { Id = (id == null ? 0 : id.Value), Name = name, Email = email, Phone = phone, Work = work };
-        var updateContact = ContactHelper.ContactToUpdate;
-        var updateContactRequest = _mapper.Map<AddContactRequest>(updateContact);
-        ContactResponse? result = null;
+        var updateContactRequest = new UpdateContactRequest { Id = id, Name = name, Email = email, Phone = phone, Company = work };
+        var updateContact = new Contact { Id = id, Name = name, Email = email, Phone = phone, Company = work };
+        UpdateContactResponse? result = null;
         Exception? ex = null;
 
-        _mockRepo.Setup(repo => repo.GetById(It.IsAny<int>())).ReturnsAsync(addContact);
-        _mockRepo.Setup(repo => repo.Update(addContact, updateContact)).ReturnsAsync(updateContact);
+        _mockRepo.Setup(repo => repo.GetById(It.IsAny<int>())).ReturnsAsync(updateContact);
+        _mockRepo.Setup(repo => repo.Update(updateContact)).ReturnsAsync(updateContact);
 
         //Act
         if (!valid)
         {
-            ex = await Assert.ThrowsAsync<ValidationException>(() => _contactService.Update(addContactRequest));
+            ex = await Assert.ThrowsAsync<ValidationException>(() => _contactService.Update(updateContactRequest));
         }
         else
         {
@@ -184,12 +193,12 @@ public class ContactServiceTests
         else
         {
             Assert.NotNull(result);
-            Assert.IsType<ContactResponse>(result);
+            Assert.IsType<UpdateContactResponse>(result);
             Assert.Equal(updateContact.Id, result.Id);
             Assert.Equal(updateContact.Name, result.Name);
             Assert.Equal(updateContact.Email, result.Email);
             Assert.Equal(updateContact.Phone, result.Phone);
-            Assert.Equal(updateContact.Work, result.Work);
+            Assert.Equal(updateContact.Company, result.Company);
         }
     }
 
@@ -197,12 +206,12 @@ public class ContactServiceTests
     public async Task UpdateNotExistContact_ReturnException()
     {
         //Arrange
-        var addContactRequest = _mapper.Map<AddContactRequest>(ContactHelper.ContactToUpdate);
+        var updateContactRequest = _mapper.Map<UpdateContactRequest>(ContactHelper.ContactToUpdate);
         _mockRepo.Setup(repo => repo.GetById(It.IsAny<int>())).ReturnsAsync((Contact)null);
 
         //Act
         var exception = await Assert.ThrowsAsync<ContactException>(
-            () => _contactService.Update(addContactRequest));
+            () => _contactService.Update(updateContactRequest));
 
         //Assert
         Assert.NotNull(exception);
@@ -215,35 +224,72 @@ public class ContactServiceTests
     {
         //Arrange
         var contact = ContactHelper.BaseContactList.ElementAt(0);
-        _mockRepo.Setup(repo => repo.GetById(It.IsAny<int>())).ReturnsAsync(contact);
+        _mockRepo.Setup(repo => repo.GetById(1)).ReturnsAsync(contact);
         _mockRepo.Setup(repo => repo.Delete(contact)).ReturnsAsync(contact);
 
         //Act
-        var result = await _contactService.DeleteById(It.IsAny<int>());
+        var result = await _contactService.DeleteById(1);
 
         //Assert
         Assert.NotNull(result);
-        Assert.IsType<ContactResponse>(result);
+        Assert.IsType<DeleteContactResponse>(result);
         Assert.Equal(contact.Id, result.Id);
         Assert.Equal(contact.Name, result.Name);
         Assert.Equal(contact.Email, result.Email);
         Assert.Equal(contact.Phone, result.Phone);
-        Assert.Equal(contact.Work, result.Work);
+        Assert.Equal(contact.Company, result.Company);
     }
 
     [Fact]
     public async Task DeleteNotExistContact_ReturnException()
     {
         //Arrange
-        _mockRepo.Setup(repo => repo.GetById(It.IsAny<int>())).ReturnsAsync((Contact)null);
+        _mockRepo.Setup(repo => repo.GetById(1)).ReturnsAsync((Contact)null);
 
         //Act
         var exception = await Assert.ThrowsAsync<ContactException>(
-            () => _contactService.DeleteById(It.IsAny<int>()));
+            () => _contactService.DeleteById(1));
 
         //Assert
         Assert.NotNull(exception);
         Assert.IsType<ContactException>(exception);
         Assert.Contains("Can't Delete: contact with given Id don't exist", exception.Message);
+    }
+
+    [Theory]
+    [InlineData(null, false, "Please specify a non-empty Keyword")]
+    [InlineData("a", true, "")]
+    public async Task FindValidationFailWithExceptionAndSuccessfulFind(string keyword, bool valid, string errorMessage)
+    {
+        //Arrange
+        var findContactRequest = new FindContactRequest { Keyword = keyword };
+        List<FindContactResponse>? result = null;
+        Exception? ex = null;
+
+        _mockRepo.Setup(repo => repo.Find(It.IsAny<string>())).ReturnsAsync(ContactHelper.BaseContactList);
+
+        //Act
+        if (!valid)
+        {
+            ex = await Assert.ThrowsAsync<ValidationException>(() => _contactService.Find(findContactRequest));
+        }
+        else
+        {
+            result = await _contactService.Find(findContactRequest);
+        }
+
+        //Assert
+        if (!valid)
+        {
+            Assert.NotNull(ex);
+            Assert.IsType<ValidationException>(ex);
+            Assert.Contains(errorMessage, ex.Message);
+        }
+        else
+        {
+            Assert.NotNull(result);
+            Assert.IsType<List<FindContactResponse>>(result);
+            Assert.Equal(ContactHelper.BaseContactList.Count, result.Count);
+        }
     }
 }

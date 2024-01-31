@@ -16,12 +16,16 @@ public class ContactRepository : IContactRepository
 
     public async Task<List<Contact>> GetAll()
     {
-        return await _contactDbContext.ContactItems.ToListAsync();
+        return await _contactDbContext.ContactItems
+            .AsNoTracking()
+            .ToListAsync();
     }
 
-    public async Task<Contact> GetById(int id)
+    public async Task<Contact?> GetById(int id)
     {
-        return await _contactDbContext.ContactItems.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+        return await _contactDbContext.ContactItems
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Id == id);
     }
 
     public async Task<Contact> Create(Contact contact)
@@ -31,21 +35,27 @@ public class ContactRepository : IContactRepository
         return contact;
     }
 
-    public async Task<Contact> Update(Contact exists, Contact contact)
+    public async Task<Contact> Delete(Contact contact)
     {
-        //exists.Id = contact.Id;
-        //exists.Name = contact.Name;
-        //exists.Email = contact.Email;
-        //exists.Phone = contact.Phone;
-        //exists.Work = contact.Work;
-        _contactDbContext.ContactItems.Update(contact);
+        _contactDbContext.ContactItems.Remove(contact);
         await _contactDbContext.SaveChangesAsync();
         return contact;
     }
 
-    public async Task<Contact> Delete(Contact contact)
+    public async Task<List<Contact>> Find(string keyword)
     {
-        _contactDbContext.ContactItems.Remove(contact);
+        var found = await _contactDbContext.ContactItems
+            .Where(x => x.Name.Contains(keyword)
+                || x.Email.Contains(keyword)
+                || x.Phone.Contains(keyword)
+                || x.Company.Contains(keyword))
+            .ToListAsync();
+        return found;
+    }
+
+    public async Task<Contact> Update(Contact contact)
+    {
+        _contactDbContext.ContactItems.Update(contact);
         await _contactDbContext.SaveChangesAsync();
         return contact;
     }
