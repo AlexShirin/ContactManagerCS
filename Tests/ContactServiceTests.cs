@@ -1,6 +1,3 @@
-using System.Numerics;
-using System.Xml.Linq;
-
 using AutoMapper;
 
 using ContactManagerCS.Contracts;
