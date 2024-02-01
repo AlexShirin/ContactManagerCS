@@ -1,4 +1,5 @@
 Primary tasks:
+
 1 Redefine business logic
 
 2 Project structure rework (program, startup, folders, ...)
