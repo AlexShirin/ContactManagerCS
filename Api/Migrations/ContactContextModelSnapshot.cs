@@ -9,8 +9,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace ContactManagerCS.Migrations
 {
-    [DbContext(typeof(ContactDbContext))]
-    partial class ContactDbContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(ContactContext))]
+    partial class ContactContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
@@ -30,7 +30,6 @@ namespace ContactManagerCS.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Company")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
@@ -51,33 +50,10 @@ namespace ContactManagerCS.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ContactItems", (string)null);
+                    b.HasIndex("Email")
+                        .IsUnique();
 
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Company = "A",
-                            Email = "a@a.a",
-                            Name = "Tom",
-                            Phone = "11"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Company = "B",
-                            Email = "b@a.a",
-                            Name = "Bob",
-                            Phone = "22"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Company = "C",
-                            Email = "c@a.a",
-                            Name = "Sam",
-                            Phone = "33"
-                        });
+                    b.ToTable("contact", (string)null);
                 });
 #pragma warning restore 612, 618
         }

@@ -18,7 +18,7 @@ public static partial class Program
 
         string connection = builder.Configuration.GetConnectionString("DefaultConnection")!;
 
-        builder.Services.AddDbContext<ContactDbContext>(options => options.UseNpgsql(connection));
+        builder.Services.AddDbContext<ContactContext>(options => options.UseNpgsql(connection));
 
         builder.Services.AddScoped<IContactRepository, ContactRepository>();
         builder.Services.AddScoped<IContactService, ContactService>();

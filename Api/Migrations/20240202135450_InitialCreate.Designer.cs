@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace ContactManagerCS.Migrations
 {
-    [DbContext(typeof(ContactDbContext))]
-    [Migration("20240131105543_InitialCreate")]
+    [DbContext(typeof(ContactContext))]
+    [Migration("20240202135450_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -33,50 +33,30 @@ namespace ContactManagerCS.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Company")
-                        .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("Phone")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("ContactItems");
+                    b.HasIndex("Email")
+                        .IsUnique();
 
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Company = "A",
-                            Email = "a@a.a",
-                            Name = "Tom",
-                            Phone = "11"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Company = "B",
-                            Email = "b@a.a",
-                            Name = "Bob",
-                            Phone = "22"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Company = "C",
-                            Email = "c@a.a",
-                            Name = "Sam",
-                            Phone = "33"
-                        });
+                    b.ToTable("contact", (string)null);
                 });
 #pragma warning restore 612, 618
         }

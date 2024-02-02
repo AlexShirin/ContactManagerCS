@@ -1,14 +1,13 @@
 ﻿using ContactManagerCS.Models;
-
 using Microsoft.EntityFrameworkCore;
 
 namespace ContactManagerCS.Database;
 
-public class ContactDbContext : DbContext
+public class ContactContext : DbContext
 {
-    public DbSet<Contact> ContactItems { get; set; } = null!;
+    public DbSet<Contact> Contact { get; set; } = null!;
 
-    public ContactDbContext(DbContextOptions<ContactDbContext> options) : base(options)
+    public ContactContext(DbContextOptions<ContactContext> options) : base(options)
     {
         Database.EnsureCreated();
     }
@@ -25,5 +24,6 @@ public class ContactDbContext : DbContext
         //    new Contact { Id = 2, Name = "Bob", Email = "b@a.a", Phone = "22", Company = "B" },
         //    new Contact { Id = 3, Name = "Sam", Email = "c@a.a", Phone = "33", Company = "C" }
         //);
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(ContactContext).Assembly);
     }
 }
