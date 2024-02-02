@@ -16,9 +16,8 @@ public class Contact
     [MaxLength(100)]
     public string Email { get; set; }
 
-    [Required(ErrorMessage = "Phone must be not empty")]
-    [RegularExpression(@"^[0-9]$", ErrorMessage = "Only digits 0-9 are allowed in Phone")]
-    [MaxLength(32, ErrorMessage = "Phone must have 32 digits max")]
+    [Required]
+    [MaxLength(32)]
     public string Phone { get; set; }
 
     [MaxLength(100)]

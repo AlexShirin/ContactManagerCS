@@ -10,8 +10,7 @@ public class ContactDbContext : DbContext
 
     public ContactDbContext(DbContextOptions<ContactDbContext> options) : base(options)
     {
-        //Database.EnsureDeleted();
-        //Database.EnsureCreated();
+        Database.EnsureCreated();
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

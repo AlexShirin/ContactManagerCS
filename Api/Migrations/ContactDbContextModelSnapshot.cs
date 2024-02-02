@@ -51,7 +51,7 @@ namespace ContactManagerCS.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ContactItems");
+                    b.ToTable("ContactItems", (string)null);
 
                     b.HasData(
                         new
