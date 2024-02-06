@@ -1,12 +1,13 @@
-﻿using ContactManagerCS.Models;
+﻿using ContactManagerCS.Services.Models;
 
 namespace ContactManagerCS.Contracts;
 
 public interface IContactService
 {
-    Task<ContactResponse> Create(AddContactRequest item);
-    Task<ContactResponse> DeleteById(int id);
-    Task<List<ContactResponse>> GetAll();
-    Task<ContactResponse> GetById(int id);
-    Task<ContactResponse> Update(AddContactRequest item);
+    Task<List<GetAllContactResponse>> GetAll();
+    Task<GetByIdContactResponse> GetById(int id);
+    Task<CreateContactResponse> Create(CreateContactRequest create);
+    Task<DeleteContactResponse> DeleteById(int id);
+    Task<List<FindContactResponse>> Find(FindContactRequest find);
+    Task<UpdateContactResponse> Update(UpdateContactRequest update);
 }
