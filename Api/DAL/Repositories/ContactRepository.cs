@@ -1,5 +1,7 @@
-﻿using ContactManagerCS.DAL.Database;
-using ContactManagerCS.DAL.Models;
+﻿using System.Xml.Linq;
+
+using ContactManagerCS.DAL.Database;
+using ContactManagerCS.DAL.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace ContactManagerCS.DAL.Repositories;

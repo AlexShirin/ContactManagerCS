@@ -17,31 +17,37 @@ public class ContactController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<List<ContactResponse>> GetAll()
+    public async Task<List<GetAllContactResponse>> GetAll()
     {
         return await contactService.GetAll();
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<ContactResponse>> GetById(int id)
+    public async Task<ActionResult<GetByIdContactResponse>> GetById(int id)
     {
         return await contactService.GetById(id);
     }
 
-    [HttpPost]
-    public async Task<ActionResult<ContactResponse>> Create(AddContactRequest item)
+    [HttpPost("create")]
+    public async Task<ActionResult<CreateContactResponse>> Create(CreateContactRequest create)
     {
-        return await contactService.Create(item);
+        return await contactService.Create(create);
     }
 
-    [HttpPut]
-    public async Task<ActionResult<ContactResponse>> Update(AddContactRequest item)
+    [HttpPost("find")]
+    public async Task<List<FindContactResponse>> Find(FindContactRequest find)
     {
-        return await contactService.Update(item);
+        return await contactService.Find(find);
+    }
+
+    [HttpPut("update")]
+    public async Task<ActionResult<UpdateContactResponse>> Update(UpdateContactRequest update)
+    {
+        return await contactService.Update(update);
     }
 
     [HttpDelete("{id}")]
-    public async Task<ActionResult<ContactResponse>> DeleteById(int id)
+    public async Task<ActionResult<DeleteContactResponse>> DeleteById(int id)
     {
         return await contactService.DeleteById(id);
     }

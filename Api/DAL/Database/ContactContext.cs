@@ -1,4 +1,4 @@
-﻿using ContactManagerCS.DAL.Models;
+﻿using ContactManagerCS.DAL.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace ContactManagerCS.DAL.Database;

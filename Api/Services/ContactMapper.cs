@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
-using ContactManagerCS.DAL.Models;
+
+using ContactManagerCS.DAL.Entities;
+using ContactManagerCS.Services.Models;
 
 namespace ContactManagerCS.Services
 {
@@ -7,8 +9,16 @@ namespace ContactManagerCS.Services
     {
         public ContactMapper()
         {
-            CreateMap<AddContactRequest, Contact>().ReverseMap();
-            CreateMap<Contact, ContactResponse>();
+            CreateMap<CreateContactRequest, Contact>();
+            CreateMap<FindContactRequest, Contact>();
+            CreateMap<UpdateContactRequest, Contact>();
+
+            CreateMap<Contact, GetAllContactResponse>();
+            CreateMap<Contact, GetByIdContactResponse>();
+            CreateMap<Contact, CreateContactResponse>();
+            CreateMap<Contact, DeleteContactResponse>();
+            CreateMap<Contact, FindContactResponse>();
+            CreateMap<Contact, UpdateContactResponse>();
         }
     }
 }

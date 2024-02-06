@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using ContactDb = ContactManagerCS.DAL.Models.Contact;
+using ContactDb = ContactManagerCS.DAL.Entities.Contact;
 
 namespace ContactManagerCS.DAL.Database.Configurations;
 

@@ -1,6 +1,4 @@
-﻿using ContactManagerCS.DAL.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using ContactManagerCS.DAL.Entities;
 
 namespace ContactManagerCS.DAL.Repositories
 {
