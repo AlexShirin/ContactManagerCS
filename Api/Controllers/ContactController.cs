@@ -29,21 +29,21 @@ public class ContactController : ControllerBase
     }
 
     [HttpPost("create")]
-    public async Task<ActionResult<CreateContactResponse>> Create(CreateContactRequest create)
+    public async Task<ActionResult<CreateContactResponse>> Create(CreateContactRequest request)
     {
-        return await contactService.Create(create);
+        return await contactService.Create(request);
     }
 
     [HttpPost("find")]
-    public async Task<List<FindContactResponse>> Find(FindContactRequest find)
+    public async Task<List<FindContactResponse>> Find(FindContactRequest request)
     {
-        return await contactService.Find(find);
+        return await contactService.Find(request);
     }
 
     [HttpPut("update")]
-    public async Task<ActionResult<UpdateContactResponse>> Update(UpdateContactRequest update)
+    public async Task<ActionResult<UpdateContactResponse>> Update(UpdateContactRequest request)
     {
-        return await contactService.Update(update);
+        return await contactService.Update(request);
     }
 
     [HttpDelete("{id}")]
