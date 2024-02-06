@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 
 using ContactManagerCS.Models;
+using ContactManagerCS.Services.Models;
 
 namespace ContactManagerCS.Services;
 
@@ -8,9 +9,9 @@ public class ContactMapper : Profile
 {
     public ContactMapper()
     {
-        CreateMap<CreateContactRequest, Contact>().ReverseMap();
-        CreateMap<FindContactRequest, Contact>().ReverseMap();
-        CreateMap<UpdateContactRequest, Contact>().ReverseMap();
+        CreateMap<CreateContactRequest, Contact>();
+        CreateMap<FindContactRequest, Contact>();
+        CreateMap<UpdateContactRequest, Contact>();
 
         CreateMap<Contact, GetAllContactResponse>();
         CreateMap<Contact, GetByIdContactResponse>();

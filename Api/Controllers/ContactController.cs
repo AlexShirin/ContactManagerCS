@@ -1,6 +1,5 @@
 ﻿using ContactManagerCS.Contracts;
-using ContactManagerCS.Models;
-
+using ContactManagerCS.Services.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ContactManagerCS.Controllers;

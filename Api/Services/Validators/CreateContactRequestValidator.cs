@@ -1,8 +1,7 @@
-﻿using ContactManagerCS.Models;
-
+﻿using ContactManagerCS.Services.Models;
 using FluentValidation;
 
-namespace ContactManagerCS.Validation
+namespace ContactManagerCS.Services.Validators
 {
     public class CreateContactRequestValidator : AbstractValidator<CreateContactRequest>
     {

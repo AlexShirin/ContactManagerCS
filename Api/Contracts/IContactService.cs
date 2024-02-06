@@ -1,4 +1,4 @@
-﻿using ContactManagerCS.Models;
+﻿using ContactManagerCS.Services.Models;
 
 namespace ContactManagerCS.Contracts;
 

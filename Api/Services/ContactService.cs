@@ -1,9 +1,10 @@
 ﻿using ContactManagerCS.Contracts;
 using ContactManagerCS.Exceptions;
 using ContactManagerCS.Models;
-using ContactManagerCS.Validation;
 using AutoMapper;
 using FluentValidation;
+using ContactManagerCS.Services.Models;
+using ContactManagerCS.Services.Validators;
 
 namespace ContactManagerCS.Services;
 
@@ -37,7 +38,7 @@ public class ContactService : IContactService
     public async Task<CreateContactResponse> Create(CreateContactRequest create)
     {
         CreateContactRequestValidator validator = new();
-        validator.ValidateAndThrow(create);
+        await validator.ValidateAndThrowAsync(create);
 
         var contact = _mapper.Map<Contact>(create);
 
@@ -55,7 +56,7 @@ public class ContactService : IContactService
     public async Task<List<FindContactResponse>> Find(FindContactRequest find)
     {
         FindContactRequestValidator validator = new();
-        validator.ValidateAndThrow(find);
+        await validator.ValidateAndThrowAsync(find);
 
         var found = await _contactRepository.Find(find.Keyword);
 
@@ -65,7 +66,7 @@ public class ContactService : IContactService
     public async Task<UpdateContactResponse> Update(UpdateContactRequest update)
     {
         UpdateContactRequestValidator validator = new();
-        validator.ValidateAndThrow(update);
+        await validator.ValidateAndThrowAsync(update);
 
         var contact = _mapper.Map<Contact>(update);
 

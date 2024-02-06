@@ -49,6 +49,10 @@ public class ContactRepository : IContactRepository
                 || x.Email.Contains(keyword)
                 || x.Phone.Contains(keyword)
                 || x.Company.Contains(keyword))
+            //.Where(x => EF.Functions.ILike(x.Name, keyword)
+            //    || EF.Functions.ILike(x.Email, keyword)
+            //    || EF.Functions.ILike(x.Phone, keyword)
+            //    || EF.Functions.ILike(x.Company, keyword))
             .ToListAsync();
         return found;
     }

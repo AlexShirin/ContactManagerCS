@@ -1,4 +1,6 @@
-﻿using ContactManagerCS.Models;
+﻿using System.IO;
+
+using ContactManagerCS.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace ContactManagerCS.Database;
@@ -14,7 +16,14 @@ public class ContactContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseNpgsql("Host=localhost;Port=5433;Database=contactDb;Username=postgres;Password=sa");
+        var configuration = new ConfigurationBuilder()
+            .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+            .AddJsonFile("appsettings.json")
+            .Build();
+
+        var connectionString = configuration.GetConnectionString("DefaultConnection");
+
+        optionsBuilder.UseNpgsql(connectionString); 
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

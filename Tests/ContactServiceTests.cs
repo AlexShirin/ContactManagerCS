@@ -4,6 +4,7 @@ using ContactManagerCS.Contracts;
 using ContactManagerCS.Exceptions;
 using ContactManagerCS.Models;
 using ContactManagerCS.Services;
+using ContactManagerCS.Services.Models;
 using ContactManagerCS.Tests.Helpers;
 
 using FluentValidation;
@@ -94,7 +95,7 @@ public class ContactServiceTests
         //Arrange
         var createContactRequest = new CreateContactRequest { Name = name, Email = email, Phone = phone, Company = company };
         var createContact = new Contact { Name = name, Email = email, Phone = phone, Company = company };
-        CreateContactResponse? result = null;
+        CreateContactResponse result = null;
         Exception? ex = null;
 
         _mockRepo.Setup(repo => repo.GetById(It.IsAny<int>())).ReturnsAsync((Contact)null);
@@ -133,12 +134,11 @@ public class ContactServiceTests
     {
         //Arrange
         var contact = ContactHelper.BaseContactList.ElementAt(0);
-        var addContactRequest = _mapper.Map<CreateContactRequest>(contact);
         _mockRepo.Setup(repo => repo.GetById(It.IsAny<int>())).ReturnsAsync(contact);
 
         //Act
         var exception = await Assert.ThrowsAsync<ContactException>(
-            () => _contactService.Create(addContactRequest));
+            () => _contactService.Create(ContactHelper.ContactToCreate));
 
         //Assert
         Assert.NotNull(exception);
@@ -203,12 +203,11 @@ public class ContactServiceTests
     public async Task UpdateNotExistContact_ReturnException()
     {
         //Arrange
-        var updateContactRequest = _mapper.Map<UpdateContactRequest>(ContactHelper.ContactToUpdate);
         _mockRepo.Setup(repo => repo.GetById(It.IsAny<int>())).ReturnsAsync((Contact)null);
 
         //Act
         var exception = await Assert.ThrowsAsync<ContactException>(
-            () => _contactService.Update(updateContactRequest));
+            () => _contactService.Update(ContactHelper.ContactToUpdate));
 
         //Assert
         Assert.NotNull(exception);
