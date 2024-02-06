@@ -1,5 +1,5 @@
-﻿using ContactManagerCS.Contracts;
-using ContactManagerCS.Services.Models;
+﻿using ContactManagerCS.Services.Models;
+using ContactManagerCS.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ContactManagerCS.Controllers;
@@ -17,37 +17,31 @@ public class ContactController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<List<GetAllContactResponse>> GetAll()
+    public async Task<List<ContactResponse>> GetAll()
     {
         return await contactService.GetAll();
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<GetByIdContactResponse>> GetById(int id)
+    public async Task<ActionResult<ContactResponse>> GetById(int id)
     {
         return await contactService.GetById(id);
     }
 
-    [HttpPost("create")]
-    public async Task<ActionResult<CreateContactResponse>> Create(CreateContactRequest item)
+    [HttpPost]
+    public async Task<ActionResult<ContactResponse>> Create(AddContactRequest item)
     {
         return await contactService.Create(item);
     }
 
-    [HttpPost("find")]
-    public async Task<List<FindContactResponse>> Find(FindContactRequest find) 
-    { 
-        return await contactService.Find(find);
-    }
-
-    [HttpPut("update")]
-    public async Task<ActionResult<UpdateContactResponse>> Update(UpdateContactRequest item)
+    [HttpPut]
+    public async Task<ActionResult<ContactResponse>> Update(AddContactRequest item)
     {
         return await contactService.Update(item);
     }
 
     [HttpDelete("{id}")]
-    public async Task<ActionResult<DeleteContactResponse>> DeleteById(int id)
+    public async Task<ActionResult<ContactResponse>> DeleteById(int id)
     {
         return await contactService.DeleteById(id);
     }

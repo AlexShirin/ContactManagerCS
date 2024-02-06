@@ -1,7 +1,7 @@
-﻿using ContactManagerCS.Models;
+﻿using ContactManagerCS.DAL.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace ContactManagerCS.Database;
+namespace ContactManagerCS.DAL.Database;
 
 public class ContactContext : DbContext
 {

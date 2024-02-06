@@ -1,75 +1,41 @@
 using AutoMapper;
 
-using ContactManagerCS.Contracts;
-using ContactManagerCS.Database;
-using ContactManagerCS.Repositories;
-using ContactManagerCS.Services;
-
-using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
-
 namespace ContactManagerCS;
 
 public static partial class Program
 {
     public static async Task Main(string[] args)
     {
-        var builder = WebApplication.CreateBuilder(args);
+        var configuration = GetConfiguration();
 
-        string connection = builder.Configuration.GetConnectionString("DefaultConnection")!;
+        var host = BuildWebHost(configuration, args);
 
-        builder.Services.AddDbContext<ContactContext>(options => options.UseNpgsql(connection));
+        await host.RunAsync();
+    }
 
-        builder.Services.AddScoped<IContactRepository, ContactRepository>();
-        builder.Services.AddScoped<IContactService, ContactService>();
-
-        builder.Services.AddControllers();
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddAutoMapper(typeof(ContactMapperProfile));
-        builder.Services.AddSwaggerGen(options =>
-        {
-            var basePath = AppContext.BaseDirectory;
-            var xmlPath = Path.Combine(basePath, "ContactManagerCS.xml");
-            //options.IncludeXmlComments(xmlPath);
-
-            options.SwaggerDoc("v1", new OpenApiInfo
+    private static IHost BuildWebHost(IConfiguration configuration, string[] args)
+    {
+        return Host.CreateDefaultBuilder(args)
+            .ConfigureWebHostDefaults(webHostBuilder =>
             {
-                Version = "v1",
-                Title = "Contact manager",
-                Description = "An ASP.NET Core Web API for managing contact items",
-                TermsOfService = new Uri("https://example.com/terms"),
-                Contact = new OpenApiContact
-                {
-                    Name = "Example Contact",
-                    Url = new Uri("https://example.com/contact")
-                },
-                License = new OpenApiLicense
-                {
-                    Name = "Example License",
-                    Url = new Uri("https://example.com/license")
-                }
-            });
-        });
+                webHostBuilder
+                .UseConfiguration(configuration)
+                .UseStartup<Startup>();
+            })
+            .Build();
+    }
 
-        var app = builder.Build();
+    private static IConfiguration GetConfiguration()
+    {
+        var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseSwagger();
-            app.UseSwaggerUI(options =>
-            {
-                options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
-                options.RoutePrefix = string.Empty;
-            });
-        }
+        var builder = new ConfigurationBuilder()
+          .SetBasePath(Directory.GetCurrentDirectory())
+          .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+          .AddJsonFile($"appsettings.{environmentName}.json", optional: true)
+          .AddEnvironmentVariables();
 
-        app.UseHttpsRedirection();
-
-        //app.UseAuthorization();
-
-        app.MapControllers();
-
-        await app.RunAsync();
+        return builder.Build();
     }
 }
 

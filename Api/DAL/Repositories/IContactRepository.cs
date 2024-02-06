@@ -1,9 +1,8 @@
-﻿using ContactManagerCS.Models;
-
+﻿using ContactManagerCS.DAL.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace ContactManagerCS.Contracts
+namespace ContactManagerCS.DAL.Repositories
 {
     public interface IContactRepository
     {
