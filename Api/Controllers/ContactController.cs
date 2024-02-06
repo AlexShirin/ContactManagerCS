@@ -1,5 +1,5 @@
-﻿using ContactManagerCS.Contracts;
-using ContactManagerCS.Services.Models;
+﻿using ContactManagerCS.Services.Models;
+using ContactManagerCS.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ContactManagerCS.Controllers;
@@ -29,21 +29,21 @@ public class ContactController : ControllerBase
     }
 
     [HttpPost("create")]
-    public async Task<ActionResult<CreateContactResponse>> Create(CreateContactRequest item)
+    public async Task<ActionResult<CreateContactResponse>> Create(CreateContactRequest request)
     {
-        return await contactService.Create(item);
+        return await contactService.Create(request);
     }
 
     [HttpPost("find")]
-    public async Task<List<FindContactResponse>> Find(FindContactRequest find) 
-    { 
-        return await contactService.Find(find);
+    public async Task<List<FindContactResponse>> Find(FindContactRequest request)
+    {
+        return await contactService.Find(request);
     }
 
     [HttpPut("update")]
-    public async Task<ActionResult<UpdateContactResponse>> Update(UpdateContactRequest item)
+    public async Task<ActionResult<UpdateContactResponse>> Update(UpdateContactRequest request)
     {
-        return await contactService.Update(item);
+        return await contactService.Update(request);
     }
 
     [HttpDelete("{id}")]

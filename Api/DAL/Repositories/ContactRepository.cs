@@ -1,9 +1,10 @@
-﻿using ContactManagerCS.Contracts;
-using ContactManagerCS.Database;
-using ContactManagerCS.Models;
+﻿using System.Xml.Linq;
+
+using ContactManagerCS.DAL.Database;
+using ContactManagerCS.DAL.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace ContactManagerCS.Repositories;
+namespace ContactManagerCS.DAL.Repositories;
 
 public class ContactRepository : IContactRepository
 {

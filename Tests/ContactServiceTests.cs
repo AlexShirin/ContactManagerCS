@@ -1,14 +1,11 @@
 using AutoMapper;
-
-using ContactManagerCS.Contracts;
-using ContactManagerCS.Exceptions;
-using ContactManagerCS.Models;
+using ContactManagerCS.Common.Exceptions;
+using ContactManagerCS.DAL.Entities;
+using ContactManagerCS.DAL.Repositories;
 using ContactManagerCS.Services;
 using ContactManagerCS.Services.Models;
 using ContactManagerCS.Tests.Helpers;
-
 using FluentValidation;
-
 using Moq;
 
 namespace ContactManagerCS.Tests;

@@ -1,4 +1,4 @@
-﻿using ContactManagerCS.Models;
+﻿using ContactManagerCS.DAL.Entities;
 using ContactManagerCS.Services.Models;
 
 namespace ContactManagerCS.Tests.Helpers;
@@ -12,8 +12,8 @@ internal static class ContactHelper
             new Contact { Id = 3, Name = "Sam", Email = "c@a.a", Phone = "33", Company = "C" },
         };
 
-    public static CreateContactRequest ContactToCreate = new() 
-        {Name = "Jim", Email = "d@d.d", Phone = "44", Company = "D" };
-    public static UpdateContactRequest ContactToUpdate = new() 
-        { Id = 4, Name = "Bim", Email = "d@d.d", Phone = "44", Company = "D" };
+    public static CreateContactRequest ContactToCreate = new()
+    { Name = "Jim", Email = "d@d.d", Phone = "44", Company = "D" };
+    public static UpdateContactRequest ContactToUpdate = new()
+    { Id = 4, Name = "Bim", Email = "d@d.d", Phone = "44", Company = "D" };
 }

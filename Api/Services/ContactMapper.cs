@@ -1,23 +1,24 @@
 ﻿using AutoMapper;
 
-using ContactManagerCS.Models;
+using ContactManagerCS.DAL.Entities;
 using ContactManagerCS.Services.Models;
 
-namespace ContactManagerCS.Services;
-
-public class ContactMapper : Profile
+namespace ContactManagerCS.Services
 {
-    public ContactMapper()
+    public class ContactMapper : Profile
     {
-        CreateMap<CreateContactRequest, Contact>();
-        CreateMap<FindContactRequest, Contact>();
-        CreateMap<UpdateContactRequest, Contact>();
+        public ContactMapper()
+        {
+            CreateMap<CreateContactRequest, Contact>();
+            CreateMap<FindContactRequest, Contact>();
+            CreateMap<UpdateContactRequest, Contact>();
 
-        CreateMap<Contact, GetAllContactResponse>();
-        CreateMap<Contact, GetByIdContactResponse>();
-        CreateMap<Contact, CreateContactResponse>();
-        CreateMap<Contact, FindContactResponse>();
-        CreateMap<Contact, DeleteContactResponse>();
-        CreateMap<Contact, UpdateContactResponse>();
+            CreateMap<Contact, GetAllContactResponse>();
+            CreateMap<Contact, GetByIdContactResponse>();
+            CreateMap<Contact, CreateContactResponse>();
+            CreateMap<Contact, DeleteContactResponse>();
+            CreateMap<Contact, FindContactResponse>();
+            CreateMap<Contact, UpdateContactResponse>();
+        }
     }
 }

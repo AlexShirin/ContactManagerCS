@@ -1,6 +1,6 @@
 ﻿using ContactManagerCS.Services.Models;
 
-namespace ContactManagerCS.Contracts;
+namespace ContactManagerCS.Services;
 
 public interface IContactService
 {
