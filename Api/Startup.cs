@@ -2,8 +2,12 @@
 using ContactManagerCS.DAL.Repositories;
 using ContactManagerCS.Services;
 
+using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
+
+using Serilog;
 
 namespace ContactManagerCS;
 
@@ -22,7 +26,7 @@ public class Startup
     {
         string connection = _configuration.GetConnectionString("DefaultConnection")!;
 
-        services.AddDbContext<ContactContext>(options => options.UseNpgsql(connection));
+        services.AddDbContext<ContactContext>(options => options.UseNpgsql(connection).LogTo(Console.WriteLine, LogLevel.Information));
 
         services.AddScoped<IContactRepository, ContactRepository>();
         services.AddScoped<IContactService, ContactService>();
@@ -54,6 +58,21 @@ public class Startup
                 }
             });
         });
+        services.AddHttpLogging(logging =>
+        {
+            logging.LoggingFields = HttpLoggingFields.All;
+            logging.RequestHeaders.Add(HeaderNames.Accept);
+            logging.RequestHeaders.Add(HeaderNames.ContentType);
+            logging.RequestHeaders.Add(HeaderNames.ContentDisposition);
+            logging.RequestHeaders.Add(HeaderNames.ContentEncoding);
+            logging.RequestHeaders.Add(HeaderNames.ContentLength);
+
+            logging.MediaTypeOptions.AddText("application/json");
+            logging.MediaTypeOptions.AddText("multipart/form-data");
+
+            logging.RequestBodyLogLimit = 4096;
+            logging.ResponseBodyLogLimit = 4096;
+        });
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -69,6 +88,10 @@ public class Startup
         }
 
         app.UseRouting();
+
+        app.UseHttpLogging();
+
+        app.UseSerilogRequestLogging();
 
         app.UseHttpsRedirection();
 

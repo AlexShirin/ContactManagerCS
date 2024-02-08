@@ -21,9 +21,11 @@ public static partial class Program
     private static IHost BuildWebHost(IConfiguration configuration, string[] args)
     {
         return Host.CreateDefaultBuilder(args)
-            .UseSerilog((context, config) =>
+            .UseSerilog((context, services, config) =>
             {
                 config.ReadFrom.Configuration(configuration);
+                config.ReadFrom.Services(services);
+                config.Enrich.FromLogContext();
             })
             .ConfigureWebHostDefaults(webHostBuilder =>
             {
