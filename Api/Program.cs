@@ -1,4 +1,5 @@
 using AutoMapper;
+using Serilog;
 
 namespace ContactManagerCS;
 
@@ -8,6 +9,10 @@ public static partial class Program
     {
         var configuration = GetConfiguration();
 
+        Log.Logger = new LoggerConfiguration()
+            .ReadFrom.Configuration(configuration)
+            .CreateLogger();
+
         var host = BuildWebHost(configuration, args);
 
         await host.RunAsync();
@@ -16,6 +21,10 @@ public static partial class Program
     private static IHost BuildWebHost(IConfiguration configuration, string[] args)
     {
         return Host.CreateDefaultBuilder(args)
+            .UseSerilog((context, config) =>
+            {
+                config.ReadFrom.Configuration(configuration);
+            })
             .ConfigureWebHostDefaults(webHostBuilder =>
             {
                 webHostBuilder
