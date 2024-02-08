@@ -1,4 +1,3 @@
-using AutoMapper;
 using Serilog;
 
 namespace ContactManagerCS;
@@ -47,14 +46,5 @@ public static partial class Program
           .AddEnvironmentVariables();
 
         return builder.Build();
-    }
-}
-
-public class ContactMapperProfile : Profile
-{
-    public ContactMapperProfile()
-    {
-        SourceMemberNamingConvention = ExactMatchNamingConvention.Instance;
-        DestinationMemberNamingConvention = ExactMatchNamingConvention.Instance;
     }
 }

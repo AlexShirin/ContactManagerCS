@@ -1,12 +1,10 @@
 ﻿using ContactManagerCS.DAL.Database;
 using ContactManagerCS.DAL.Repositories;
 using ContactManagerCS.Services;
-
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
-
 using Serilog;
 
 namespace ContactManagerCS;
@@ -33,12 +31,11 @@ public class Startup
 
         services.AddControllers();
         services.AddEndpointsApiExplorer();
-        services.AddAutoMapper(typeof(ContactMapperProfile));
+        services.AddAutoMapper(typeof(ContactMapper));
         services.AddSwaggerGen(options =>
         {
             var basePath = AppContext.BaseDirectory;
             var xmlPath = Path.Combine(basePath, "ContactManagerCS.xml");
-            //options.IncludeXmlComments(xmlPath);
 
             options.SwaggerDoc("v1", new OpenApiInfo
             {
@@ -58,6 +55,7 @@ public class Startup
                 }
             });
         });
+
         services.AddHttpLogging(logging =>
         {
             logging.LoggingFields = HttpLoggingFields.All;
