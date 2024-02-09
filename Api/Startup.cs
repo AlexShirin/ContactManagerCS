@@ -3,9 +3,6 @@ using ContactManagerCS.DAL.Repositories;
 using ContactManagerCS.Services;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
 using Serilog;
 
@@ -82,9 +79,9 @@ public class Startup
 
         app.UseHttpsRedirection();
 
-        app.UseEndpoints(endpoints => 
-        { 
-            endpoints.MapControllers(); 
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllers();
         });
     }
 }
