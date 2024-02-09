@@ -3,6 +3,8 @@ using ContactManagerCS.DAL.Repositories;
 using ContactManagerCS.Services;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
 using Serilog;
@@ -56,21 +58,8 @@ public class Startup
             });
         });
 
-        services.AddHttpLogging(logging =>
-        {
-            logging.LoggingFields = HttpLoggingFields.All;
-            logging.RequestHeaders.Add(HeaderNames.Accept);
-            logging.RequestHeaders.Add(HeaderNames.ContentType);
-            logging.RequestHeaders.Add(HeaderNames.ContentDisposition);
-            logging.RequestHeaders.Add(HeaderNames.ContentEncoding);
-            logging.RequestHeaders.Add(HeaderNames.ContentLength);
-
-            logging.MediaTypeOptions.AddText("application/json");
-            logging.MediaTypeOptions.AddText("multipart/form-data");
-
-            logging.RequestBodyLogLimit = 4096;
-            logging.ResponseBodyLogLimit = 4096;
-        });
+        services.Configure<HttpLoggingOptions>(_configuration.GetSection("Logging:HttpLogging"));
+        services.AddHttpLogging(logging => { });
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
