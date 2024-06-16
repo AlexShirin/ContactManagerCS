@@ -61,8 +61,8 @@ public class Startup
 
             options.AddSecurityDefinition("apiKey", new OpenApiSecurityScheme
             {
-                In = ParameterLocation.Query,
-                Name = "apiKey",
+                In = ParameterLocation.Header,
+                Name = "X-API-Key",
                 Type = SecuritySchemeType.ApiKey,
                 Description = "API Key Authentication"
             });
@@ -79,7 +79,7 @@ public class Startup
                         },
                         Scheme = "apiKey",
                         Name = "apiKey",
-                        In = ParameterLocation.Query
+                        In = ParameterLocation.Header
                     },
                     new List<string>()
                 }
