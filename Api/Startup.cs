@@ -1,9 +1,10 @@
 ﻿using ContactManagerCS.DAL.Database;
 using ContactManagerCS.DAL.Repositories;
 using ContactManagerCS.Services;
-
+using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Serilog;
 
 namespace ContactManagerCS;
 
@@ -22,19 +23,18 @@ public class Startup
     {
         string connection = _configuration.GetConnectionString("DefaultConnection")!;
 
-        services.AddDbContext<ContactContext>(options => options.UseNpgsql(connection));
+        services.AddDbContext<ContactContext>(options => options.UseNpgsql(connection).LogTo(Console.WriteLine, LogLevel.Information));
 
         services.AddScoped<IContactRepository, ContactRepository>();
         services.AddScoped<IContactService, ContactService>();
 
         services.AddControllers();
         services.AddEndpointsApiExplorer();
-        services.AddAutoMapper(typeof(ContactMapperProfile));
+        services.AddAutoMapper(typeof(ContactMapper));
         services.AddSwaggerGen(options =>
         {
             var basePath = AppContext.BaseDirectory;
             var xmlPath = Path.Combine(basePath, "ContactManagerCS.xml");
-            //options.IncludeXmlComments(xmlPath);
 
             options.SwaggerDoc("v1", new OpenApiInfo
             {
@@ -55,6 +55,8 @@ public class Startup
             });
         });
 
+        services.Configure<HttpLoggingOptions>(_configuration.GetSection("Logging:HttpLogging"));
+        services.AddHttpLogging(logging => { });
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -71,11 +73,15 @@ public class Startup
 
         app.UseRouting();
 
+        app.UseHttpLogging();
+
+        app.UseSerilogRequestLogging();
+
         app.UseHttpsRedirection();
 
-        app.UseEndpoints(endpoints => 
-        { 
-            endpoints.MapControllers(); 
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllers();
         });
     }
 }
