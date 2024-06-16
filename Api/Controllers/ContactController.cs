@@ -1,6 +1,8 @@
 ﻿using ContactManagerCS.Services.Models;
 using ContactManagerCS.Services;
 using Microsoft.AspNetCore.Mvc;
+using ContactManagerCS.Common.ApiKeyAuthentication;
+using ContactManagerCS.Common.Exceptions;
 
 namespace ContactManagerCS.Controllers;
 
@@ -9,46 +11,56 @@ namespace ContactManagerCS.Controllers;
 [Produces("application/json")]
 public class ContactController : ControllerBase
 {
-    private readonly IContactService contactService;
+    private readonly IContactService _contactService;
+    private readonly IApiKeyValidation _apiKeyValidation;
 
-    public ContactController(IContactService contactService)
+    public ContactController(
+        IContactService contactService, 
+        IApiKeyValidation apiKeyValidation)
     {
-        this.contactService = contactService;
+        _contactService = contactService;
+        _apiKeyValidation = apiKeyValidation;
     }
 
     [HttpGet]
-    public async Task<List<GetAllContactResponse>> GetAll()
+    [ApiKey]
+    public async Task<List<GetAllContactResponse>> GetAll(/*string apiKey*/)
     {
-        return await contactService.GetAll();
+        //if (string.IsNullOrWhiteSpace(apiKey)) throw new ContactException("ApiKey is missing");
+
+        //bool isValid = _apiKeyValidation.IsValidApiKey(apiKey);
+        //if (!isValid) throw new ContactException("ApiKey is invalid");
+
+        return await _contactService.GetAll();
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<GetByIdContactResponse>> GetById(int id)
     {
-        return await contactService.GetById(id);
+        return await _contactService.GetById(id);
     }
 
     [HttpPost("create")]
     public async Task<ActionResult<CreateContactResponse>> Create(CreateContactRequest request)
     {
-        return await contactService.Create(request);
+        return await _contactService.Create(request);
     }
 
     [HttpPost("find")]
     public async Task<List<FindContactResponse>> Find(FindContactRequest request)
     {
-        return await contactService.Find(request);
+        return await _contactService.Find(request);
     }
 
     [HttpPut("update")]
     public async Task<ActionResult<UpdateContactResponse>> Update(UpdateContactRequest request)
     {
-        return await contactService.Update(request);
+        return await _contactService.Update(request);
     }
 
     [HttpDelete("{id}")]
     public async Task<ActionResult<DeleteContactResponse>> DeleteById(int id)
     {
-        return await contactService.DeleteById(id);
+        return await _contactService.DeleteById(id);
     }
 }

@@ -1,4 +1,5 @@
-﻿using ContactManagerCS.DAL.Database;
+﻿using ContactManagerCS.Common.ApiKeyAuthentication;
+using ContactManagerCS.DAL.Database;
 using ContactManagerCS.DAL.Repositories;
 using ContactManagerCS.Services;
 using Microsoft.AspNetCore.HttpLogging;
@@ -27,6 +28,10 @@ public class Startup
 
         services.AddScoped<IContactRepository, ContactRepository>();
         services.AddScoped<IContactService, ContactService>();
+
+        services.AddTransient<IApiKeyValidation, ApiKeyValidation>();
+        services.AddScoped<ApiKeyAuthFilter>();
+        services.AddHttpContextAccessor();
 
         services.AddControllers();
         services.AddEndpointsApiExplorer();
