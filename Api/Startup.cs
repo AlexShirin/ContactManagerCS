@@ -58,6 +58,32 @@ public class Startup
                     Url = new Uri("https://example.com/license")
                 }
             });
+
+            options.AddSecurityDefinition("apiKey", new OpenApiSecurityScheme
+            {
+                In = ParameterLocation.Query,
+                Name = "apiKey",
+                Type = SecuritySchemeType.ApiKey,
+                Description = "API Key Authentication"
+            });
+
+            options.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "apiKey"
+                        },
+                        Scheme = "apiKey",
+                        Name = "apiKey",
+                        In = ParameterLocation.Query
+                    },
+                    new List<string>()
+                }
+            });
         });
 
         services.Configure<HttpLoggingOptions>(_configuration.GetSection("Logging:HttpLogging"));
