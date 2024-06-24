@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace ContactManagerCS.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("[controller]")]
 [Produces("application/json")]
@@ -24,15 +25,8 @@ public class ContactController : ControllerBase
     }
 
     [HttpGet]
-    //[ApiKey]
-    [Authorize]
-    public async Task<List<GetAllContactResponse>> GetAll(/*string apiKey*/)
+    public async Task<List<GetAllContactResponse>> GetAll()
     {
-        //if (string.IsNullOrWhiteSpace(apiKey)) throw new ContactException("ApiKey is missing");
-
-        //bool isValid = _apiKeyValidation.IsValidApiKey(apiKey);
-        //if (!isValid) throw new ContactException("ApiKey is invalid");
-
         return await _contactService.GetAll();
     }
 
