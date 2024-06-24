@@ -3,6 +3,7 @@ using ContactManagerCS.Services;
 using Microsoft.AspNetCore.Mvc;
 using ContactManagerCS.Common.ApiKeyAuthentication;
 using ContactManagerCS.Common.Exceptions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ContactManagerCS.Controllers;
 
@@ -23,7 +24,8 @@ public class ContactController : ControllerBase
     }
 
     [HttpGet]
-    [ApiKey]
+    //[ApiKey]
+    [Authorize]
     public async Task<List<GetAllContactResponse>> GetAll(/*string apiKey*/)
     {
         //if (string.IsNullOrWhiteSpace(apiKey)) throw new ContactException("ApiKey is missing");

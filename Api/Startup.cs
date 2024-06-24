@@ -2,6 +2,8 @@
 using ContactManagerCS.DAL.Database;
 using ContactManagerCS.DAL.Repositories;
 using ContactManagerCS.Services;
+
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -32,6 +34,9 @@ public class Startup
         services.AddTransient<IApiKeyValidation, ApiKeyValidation>();
         services.AddScoped<ApiKeyAuthFilter>();
         services.AddHttpContextAccessor();
+
+        services.AddAuthentication("ApiKey").AddScheme<AuthenticationSchemeOptions, ApiKeyAuthenticationHandler>("ApiKey", null);
+        services.AddAuthorization();
 
         services.AddControllers();
         services.AddEndpointsApiExplorer();
@@ -103,6 +108,9 @@ public class Startup
         }
 
         app.UseRouting();
+
+        app.UseAuthentication();
+        app.UseAuthorization();
 
         app.UseHttpLogging();
 
