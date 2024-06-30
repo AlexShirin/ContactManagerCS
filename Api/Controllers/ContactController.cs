@@ -4,6 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 using ContactManagerCS.Common.ApiKeyAuthentication;
 using ContactManagerCS.Common.Exceptions;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace ContactManagerCS.Controllers;
 
@@ -59,4 +63,45 @@ public class ContactController : ControllerBase
     {
         return await _contactService.DeleteById(id);
     }
+
+    //[HttpPost("login")]
+    //public IActionResult Login([FromBody] LoginModel login)
+    //{
+    //    if (IsValidUser(login))
+    //    {
+    //        var token = GenerateJwtToken();
+    //        return Ok(new { token });
+    //    }
+
+    //    return Unauthorized();
+    //}
+
+    //public class LoginModel
+    //{
+    //    public required string Username { get; set; }
+    //    public required string Password { get; set; }
+    //}
+
+    //private bool IsValidUser(LoginModel login)
+    //{
+    //    // Implement your user validation logic here
+    //    return login.Username == "test" && login.Password == "password";
+    //}
+
+    //private string GenerateJwtToken()
+    //{
+    //    var tokenHandler = new JwtSecurityTokenHandler();
+    //    var key = Encoding.UTF8.GetBytes("my_secret_key_here12345678901234567890");
+    //    var tokenDescriptor = new SecurityTokenDescriptor
+    //    {
+    //        Subject = new ClaimsIdentity(new[]
+    //        {
+    //            new Claim(ClaimTypes.Name, "test")
+    //        }),
+    //        Expires = DateTime.UtcNow.AddHours(1),
+    //        SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+    //    };
+    //    var token = tokenHandler.CreateToken(tokenDescriptor);
+    //    return tokenHandler.WriteToken(token);
+    //}
 }

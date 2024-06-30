@@ -1,11 +1,14 @@
-﻿using ContactManagerCS.Common.ApiKeyAuthentication;
+﻿using System.Text;
+using ContactManagerCS.Common.ApiKeyAuthentication;
 using ContactManagerCS.DAL.Database;
 using ContactManagerCS.DAL.Repositories;
 using ContactManagerCS.Services;
 
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 
@@ -37,6 +40,21 @@ public class Startup
 
         services.AddAuthentication("ApiKey").AddScheme<AuthenticationSchemeOptions, ApiKeyAuthenticationHandler>("ApiKey", null);
         services.AddAuthorization();
+
+        //services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        //    .AddJwtBearer(options =>
+        //    {
+        //        options.TokenValidationParameters = new TokenValidationParameters
+        //        {
+        //            ValidateIssuer = true,
+        //            ValidateAudience = true,
+        //            ValidateLifetime = true,
+        //            ValidateIssuerSigningKey = true,
+        //            ValidIssuer = "yourdomain.com",
+        //            ValidAudience = "yourdomain.com",
+        //            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("my_secret_key_here12345678901234567890"))
+        //        };
+        //    });
 
         services.AddControllers();
         services.AddEndpointsApiExplorer();
