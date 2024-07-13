@@ -1,13 +1,14 @@
 ﻿using System.Text;
 using ContactManagerCS.Common.ApiKeyAuthentication;
+using ContactManagerCS.Common.Loggers;
 using ContactManagerCS.DAL.Database;
 using ContactManagerCS.DAL.Repositories;
 using ContactManagerCS.Services;
-
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
@@ -111,6 +112,12 @@ public class Startup
 
         services.Configure<HttpLoggingOptions>(_configuration.GetSection("Logging:HttpLogging"));
         services.AddHttpLogging(logging => { });
+
+        services.Configure<RabbitMQOptions>(_configuration.GetSection("RabbitMq"));
+        services.AddDbContext<LogContext>(options => options.UseNpgsql(connection));
+        services.AddSingleton<RabbitMQLogger>();
+        services.AddSingleton<LogService>(); 
+        services.AddHostedService<LogServiceHostedService>();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

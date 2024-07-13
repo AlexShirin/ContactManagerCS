@@ -1,5 +1,6 @@
 using AutoMapper;
 using ContactManagerCS.Common.Exceptions;
+using ContactManagerCS.Common.Loggers;
 using ContactManagerCS.DAL.Entities;
 using ContactManagerCS.DAL.Repositories;
 using ContactManagerCS.Services;
@@ -14,6 +15,7 @@ public class ContactServiceTests
 {
     private readonly Mock<IContactRepository> _mockRepo;
     private readonly ContactService _contactService;
+    //private readonly RabbitMQLogger _logger;
     private readonly IMapper _mapper;
 
     public ContactServiceTests()
@@ -21,8 +23,9 @@ public class ContactServiceTests
         var contactMapperProfile = new ContactMapper();
         var mapperConfiguration = new MapperConfiguration(cfg => cfg.AddProfile(contactMapperProfile));
         _mapper = new Mapper(mapperConfiguration);
+        //_logger = new RabbitMQLogger(new());
         _mockRepo = new Mock<IContactRepository>();
-        _contactService = new ContactService(_mockRepo.Object, _mapper);
+        _contactService = new ContactService(_mockRepo.Object, null, _mapper);
     }
 
     [Fact]
