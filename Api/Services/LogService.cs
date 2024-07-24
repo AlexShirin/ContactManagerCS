@@ -5,10 +5,11 @@ using ContactManagerCS.DAL.Entities;
 using System.Text;
 using ContactManagerCS.Common.Loggers;
 using Microsoft.Extensions.Options;
+using ContactManagerCS.DAL.Repositories;
 
 namespace ContactManagerCS.Services;
 
-public class LogService
+public class LogService : ILogService
 {
     private readonly IConnection _connection;
     private readonly IModel _channel;
@@ -35,17 +36,16 @@ public class LogService
         {
             var body = ea.Body.ToArray();
             var message = Encoding.UTF8.GetString(body);
-            SaveLog(message);
+            SaveLog(message).GetAwaiter().GetResult();
         };
         _channel.BasicConsume(queue: _queueName, autoAck: true, consumer: consumer);
     }
 
-    private void SaveLog(string message)
+    private async Task SaveLog(string message)
     {
-        using var scope = _scopeFactory.CreateScope();
-        var context = scope.ServiceProvider.GetRequiredService<LogContext>();
         var log = new Log { Message = message };
-        context.Logs.Add(log);
-        context.SaveChanges();
+        using var scope = _scopeFactory.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<ILogRepository>();
+        await context.Add(log);
     }
 }

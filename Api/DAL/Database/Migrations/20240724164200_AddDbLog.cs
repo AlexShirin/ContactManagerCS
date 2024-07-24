@@ -4,16 +4,16 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace ContactManagerCS.DAL.Database.Migrations
+namespace ContactManagerCS.Migrations
 {
     /// <inheritdoc />
-    public partial class AddLogContext : Migration
+    public partial class AddDbLog : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Logs",
+                name: "Log",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -23,7 +23,7 @@ namespace ContactManagerCS.DAL.Database.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Logs", x => x.Id);
+                    table.PrimaryKey("PK_Log", x => x.Id);
                 });
         }
 
@@ -31,7 +31,7 @@ namespace ContactManagerCS.DAL.Database.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Logs");
+                name: "Log");
         }
     }
 }

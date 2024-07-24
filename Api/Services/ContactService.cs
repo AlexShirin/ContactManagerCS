@@ -15,10 +15,10 @@ namespace ContactManagerCS.Services;
 public class ContactService : IContactService
 {
     private readonly IContactRepository _contactRepository;
-    private readonly RabbitMQLogger _logger;
+    private readonly ICustomLogger _logger;
     private readonly IMapper _mapper;
 
-    public ContactService(IContactRepository contactRepository, RabbitMQLogger logger, IMapper mapper)
+    public ContactService(IContactRepository contactRepository, ICustomLogger logger, IMapper mapper)
     {
         _contactRepository = contactRepository;
         _logger = logger;

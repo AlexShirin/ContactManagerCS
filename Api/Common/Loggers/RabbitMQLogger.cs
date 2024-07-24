@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ContactManagerCS.Common.Loggers;
 
-public class RabbitMQLogger
+public class RabbitMQLogger : ICustomLogger
 {
     private readonly IConnection _connection;
     private readonly IModel _channel;

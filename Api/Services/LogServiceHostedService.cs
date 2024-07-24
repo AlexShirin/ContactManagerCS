@@ -13,7 +13,7 @@ public class LogServiceHostedService : IHostedService
     {
         using (var scope = _serviceProvider.CreateScope())
         {
-            var logService = scope.ServiceProvider.GetRequiredService<LogService>();
+            var logService = scope.ServiceProvider.GetRequiredService<ILogService>();
             logService.Start();
         }
         return Task.CompletedTask;

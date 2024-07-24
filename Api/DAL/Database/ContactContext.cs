@@ -6,6 +6,7 @@ namespace ContactManagerCS.DAL.Database;
 public class ContactContext : DbContext
 {
     public DbSet<Contact> Contact { get; set; }
+    public DbSet<Log> Log { get; set; }
 
     public ContactContext(DbContextOptions<ContactContext> options) : base(options)
     {
@@ -15,5 +16,6 @@ public class ContactContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ContactContext).Assembly);
+        modelBuilder.Entity<Log>().ToTable("Log");
     }
 }
