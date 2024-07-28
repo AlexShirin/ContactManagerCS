@@ -22,7 +22,7 @@ public class RabbitMQLogger : ICustomLogger
         _connection = factory.CreateConnection();
         _channel = _connection.CreateModel();
 
-        _channel.ExchangeDeclare(exchange: _exchangeName, type: ExchangeType.Fanout);
+        _channel.ExchangeDeclare(exchange: _exchangeName, type: ExchangeType.Direct);
 
         //_channel.QueueDeclare(queue: _queueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
     }
@@ -30,6 +30,7 @@ public class RabbitMQLogger : ICustomLogger
     public void Log(string message)
     {
         var body = Encoding.UTF8.GetBytes(message);
-        _channel.BasicPublish(exchange: "", routingKey: _queueName, basicProperties: null, body: body);
+        //_channel.BasicPublish(exchange: "", routingKey: _queueName, basicProperties: null, body: body);
+        _channel.BasicPublish(exchange: _exchangeName, routingKey: _queueName, basicProperties: null, body: body);
     }
 }

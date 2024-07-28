@@ -14,6 +14,7 @@ public class LogService : ILogService
     private readonly IConnection _connection;
     private readonly IModel _channel;
     private readonly string _queueName;
+    private readonly string _queueNameError;
     private readonly string _exchangeName;
     private readonly IServiceScopeFactory _scopeFactory;
 
@@ -21,6 +22,7 @@ public class LogService : ILogService
     {
         var rabbitMQOptions = options.Value;
         _queueName = rabbitMQOptions.QueueName;
+        _queueNameError = _queueName + "_error";
         _exchangeName = rabbitMQOptions.ExchangeName;
         _scopeFactory = scopeFactory;
 
@@ -28,11 +30,16 @@ public class LogService : ILogService
         _connection = factory.CreateConnection();
         _channel = _connection.CreateModel();
 
-        _channel.ExchangeDeclare(exchange: _exchangeName, type: ExchangeType.Fanout);
+        _channel.ExchangeDeclare(exchange: _exchangeName, type: ExchangeType.Direct);
 
-        _channel.QueueDeclare(queue: _queueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
+        _channel.QueueDeclare(queue: _queueNameError, durable: false, exclusive: false, autoDelete: false, arguments: null);
 
-        _channel.QueueBind(queue: _queueName, exchange: _exchangeName, routingKey: string.Empty);
+        var args = new Dictionary<string, object>();
+        args.Add("x-dead-letter-exchange", _queueNameError);
+        _channel.QueueDeclare(queue: _queueName, durable: false, exclusive: false, autoDelete: false, arguments: args);
+
+        _channel.QueueBind(queue: _queueName, exchange: _exchangeName, routingKey: _queueName);
+        _channel.QueueBind(queue: _queueNameError, exchange: _exchangeName, routingKey: _queueNameError);
     }
 
     public void Start()
@@ -42,9 +49,29 @@ public class LogService : ILogService
         {
             var body = ea.Body.ToArray();
             var message = Encoding.UTF8.GetString(body);
-            SaveLog(message).GetAwaiter().GetResult();
+            try
+            {
+                SaveLog(message).GetAwaiter().GetResult();
+                _channel.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);
+            }
+            catch (Exception ex)
+            {
+                HandleError(ea.DeliveryTag, body, ex);
+            }
         };
-        _channel.BasicConsume(queue: _queueName, autoAck: true, consumer: consumer);
+        _channel.BasicConsume(queue: _queueName, autoAck: false, consumer: consumer);
+    }
+
+    private void HandleError(ulong deliveryTag, byte[] body, Exception exception)
+    {
+        //throw new NotImplementedException();
+        var errorMessage = Encoding.UTF8.GetString(body);
+        var errorDetails = $"Exception: {exception.Message} | {errorMessage}";
+        var errorBody = Encoding.UTF8.GetBytes(errorDetails);
+
+        _channel.BasicPublish(exchange: _exchangeName, routingKey: _queueNameError, basicProperties: null, body: errorBody);
+
+        _channel.BasicNack(deliveryTag, false, false);
     }
 
     private async Task SaveLog(string message)

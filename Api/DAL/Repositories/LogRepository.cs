@@ -19,6 +19,7 @@ public class LogRepository : ILogRepository
 
     public async Task<Log> Add(Log entity)
     {
+        //throw new NotImplementedException();
         DbSet.Add(entity);
         await Context.SaveChangesAsync();
         return entity;
