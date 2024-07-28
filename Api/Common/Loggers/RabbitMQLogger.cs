@@ -25,8 +25,6 @@ public class RabbitMQLogger : ICustomLogger
         _channel.ExchangeDeclare(exchange: _exchangeName, type: ExchangeType.Fanout);
 
         //_channel.QueueDeclare(queue: _queueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
-
-        //_channel.QueueBind(queue: _queueName, exchange: _exchangeName, routingKey: string.Empty);
     }
 
     public void Log(string message)

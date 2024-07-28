@@ -49,6 +49,7 @@ public class LogService : ILogService
 
     private async Task SaveLog(string message)
     {
+        //throw new NotImplementedException();
         var log = new Log { Message = message };
         using var scope = _scopeFactory.CreateScope();
         var logRepository = scope.ServiceProvider.GetRequiredService<ILogRepository>();
