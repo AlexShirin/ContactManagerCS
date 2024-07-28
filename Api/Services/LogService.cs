@@ -14,19 +14,25 @@ public class LogService : ILogService
     private readonly IConnection _connection;
     private readonly IModel _channel;
     private readonly string _queueName;
+    private readonly string _exchangeName;
     private readonly IServiceScopeFactory _scopeFactory;
 
     public LogService(IOptions<RabbitMQOptions> options, IServiceScopeFactory scopeFactory)
     {
-        _scopeFactory = scopeFactory;
         var rabbitMQOptions = options.Value;
+        _queueName = rabbitMQOptions.QueueName;
+        _exchangeName = rabbitMQOptions.ExchangeName;
+        _scopeFactory = scopeFactory;
 
         var factory = new ConnectionFactory() { HostName = rabbitMQOptions.Hostname, Port = rabbitMQOptions.Port };
         _connection = factory.CreateConnection();
         _channel = _connection.CreateModel();
-        _queueName = rabbitMQOptions.QueueName;
+
+        _channel.ExchangeDeclare(exchange: _exchangeName, type: ExchangeType.Fanout);
 
         _channel.QueueDeclare(queue: _queueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
+
+        _channel.QueueBind(queue: _queueName, exchange: _exchangeName, routingKey: string.Empty);
     }
 
     public void Start()

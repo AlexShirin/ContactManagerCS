@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using System.Text;
+using System.Threading.Channels;
 
 namespace ContactManagerCS.Common.Loggers;
 
@@ -9,17 +10,23 @@ public class RabbitMQLogger : ICustomLogger
     private readonly IConnection _connection;
     private readonly IModel _channel;
     private readonly string _queueName;
+    private readonly string _exchangeName;
 
     public RabbitMQLogger(IOptions<RabbitMQOptions> options)
     {
         var rabbitMQOptions = options.Value;
+        _queueName = rabbitMQOptions.QueueName;
+        _exchangeName = rabbitMQOptions.ExchangeName;
 
         var factory = new ConnectionFactory() { HostName = rabbitMQOptions.Hostname, Port = rabbitMQOptions.Port };
         _connection = factory.CreateConnection();
         _channel = _connection.CreateModel();
-        _queueName = rabbitMQOptions.QueueName;
 
-        _channel.QueueDeclare(queue: _queueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
+        _channel.ExchangeDeclare(exchange: _exchangeName, type: ExchangeType.Fanout);
+
+        //_channel.QueueDeclare(queue: _queueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
+
+        //_channel.QueueBind(queue: _queueName, exchange: _exchangeName, routingKey: string.Empty);
     }
 
     public void Log(string message)

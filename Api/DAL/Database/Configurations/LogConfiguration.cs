@@ -9,7 +9,7 @@ public class LogConfiguration : IEntityTypeConfiguration<LogDb>
     public void Configure(EntityTypeBuilder<LogDb> builder)
     {
         builder
-            .ToTable("log");
+            .ToTable("Log");
 
         builder.HasKey(x => x.Id);
 

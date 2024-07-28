@@ -16,6 +16,6 @@ public class ContactContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ContactContext).Assembly);
-        modelBuilder.Entity<Log>().ToTable("Log");
+        //modelBuilder.Entity<Log>().ToTable("Log");
     }
 }
