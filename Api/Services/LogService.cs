@@ -45,7 +45,7 @@ public class LogService : ILogService
     {
         var log = new Log { Message = message };
         using var scope = _scopeFactory.CreateScope();
-        var context = scope.ServiceProvider.GetRequiredService<ILogRepository>();
-        await context.Add(log);
+        var logRepository = scope.ServiceProvider.GetRequiredService<ILogRepository>();
+        await logRepository.Add(log);
     }
 }
