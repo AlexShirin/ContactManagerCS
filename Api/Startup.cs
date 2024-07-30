@@ -114,7 +114,6 @@ public class Startup
         services.AddHttpLogging(logging => { });
 
         services.Configure<RabbitMQOptions>(_configuration.GetSection("RabbitMq"));
-        //services.AddSingleton<RabbitMQLogger>();
         services.AddScoped<ICustomLogger, RabbitMQLogger>();
         services.AddScoped<ILogService, LogService>();
         services.AddScoped<ILogRepository, LogRepository>();
