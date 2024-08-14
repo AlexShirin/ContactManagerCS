@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  contactmanagercs:
+    image: ${DOCKER_REGISTRY-}contactmanagercs
+    build:
+      context: .
+      dockerfile: Api/Dockerfile
