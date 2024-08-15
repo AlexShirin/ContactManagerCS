@@ -1,8 +1,34 @@
 version: '3.4'
+name: ContactManagerCS
 
 services:
   contactmanagercs:
+    container_name: ContactManagerCS.Api
     image: ${DOCKER_REGISTRY-}contactmanagercs
     build:
       context: .
       dockerfile: Api/Dockerfile
+    ports:
+      - "5197:5197"
+      - "7193:7193"
+      
+  contactmanagercs.db: 
+    container_name: ContactManagerCS.Db
+    image: postgres
+    environment: 
+      - POSTGRES_DB=contactDb
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=sa
+    volumes:
+      - ./.containers/contactDb:/var/lib/postgresql/data
+    ports:
+      - "5433:5433"
+      - "5432:5432"
+
+  contactmanagercs.queue: 
+    container_name: ContactManagerCS.Queue
+    image: rabbitmq:3.13-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+

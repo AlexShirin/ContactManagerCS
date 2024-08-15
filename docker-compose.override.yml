@@ -4,11 +4,11 @@ services:
   contactmanagercs:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_HTTP_PORTS=8080
-      - ASPNETCORE_HTTPS_PORTS=8081
+      - ASPNETCORE_HTTP_PORTS=5197
+      - ASPNETCORE_HTTPS_PORTS=7193
     ports:
-      - "8080"
-      - "8081"
+      - "5197:5197"
+      - "7193:7193"
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
