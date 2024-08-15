@@ -7,7 +7,8 @@
     <ProjectGuid>9ab900fa-d51a-439a-ad6a-2a4d3e095ecc</ProjectGuid>
     <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
     <DockerServiceUrl>{Scheme}://localhost:{ServicePort}</DockerServiceUrl>
-    <DockerServiceName>contactmanagercs</DockerServiceName>
+    <DockerServiceName>contact-manager-cs</DockerServiceName>
+    <DockerComposeProjectName>contact-manager-cs</DockerComposeProjectName>
   </PropertyGroup>
   <ItemGroup>
     <None Include="docker-compose.override.yml">

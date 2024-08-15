@@ -3,8 +3,13 @@
     "Docker Compose": {
       "commandName": "DockerCompose",
       "commandVersion": "1.0",
+      "composeLaunchAction": "LaunchBrowser",
+      "composeLaunchServiceName": "contactmanagercs",
+      "composeLaunchUrl": "{Scheme}://localhost:{ServicePort}",
       "serviceActions": {
-        "contactmanagercs": "StartDebugging"
+        "contactmanagercs": "StartDebugging",
+        "contactmanagercs.db": "StartWithoutDebugging",
+        "contactmanagercs.queue": "StartWithoutDebugging"
       }
     }
   }
