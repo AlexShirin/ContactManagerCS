@@ -11,7 +11,10 @@ services:
     ports:
       - "5197:5197"
       - "7193:7193"
-      
+    depends_on:
+      - contactmanagercs.db
+      - contactmanagercs.queue
+
   contactmanagercs.db: 
     container_name: ContactManagerCS.Db
     image: postgres
