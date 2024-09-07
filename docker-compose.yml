@@ -1,0 +1,48 @@
+version: '3.4'
+
+services:
+  contactmanagercs:
+    container_name: ContactManagerCS.Api
+    image: ${DOCKER_REGISTRY-}contactmanagercs
+    build:
+      context: .
+      dockerfile: Api/Dockerfile
+    ports:
+      - "5197:5197"
+      - "7193:7193"
+    depends_on:
+      contactmanagercs.db:
+        condition: service_healthy
+      contactmanagercs.queue:
+        condition: service_healthy
+
+  contactmanagercs.db: 
+    container_name: ContactManagerCS.Db
+    image: postgres
+    environment: 
+      - POSTGRES_DB=contactDb
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=sa
+    volumes:
+      - ./.containers/contactDb:/var/lib/postgresql/data
+    ports:
+      - "5433:5433"
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 1s
+      retries: 10
+      start_period: 1s
+      timeout: 1s
+
+  contactmanagercs.queue: 
+    container_name: ContactManagerCS.Queue
+    image: rabbitmq:3.13-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: rabbitmq-diagnostics -q status
+      interval: 1s
+      timeout: 6s
+      retries: 10
