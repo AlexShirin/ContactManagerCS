@@ -1,4 +1,5 @@
-﻿using ContactManagerCS.Services.Models;
+using Asp.Versioning;
+using ContactManagerCS.Services.Models;
 using ContactManagerCS.Services;
 using Microsoft.AspNetCore.Mvc;
 using ContactManagerCS.Common.ApiKeyAuthentication;
@@ -13,7 +14,8 @@ namespace ContactManagerCS.Controllers;
 
 [Authorize]
 [ApiController]
-[Route("[controller]")]
+[ApiVersion("1.0")]
+[Route("api/v{version:apiVersion}/[controller]")]
 [Produces("application/json")]
 public class ContactController : ControllerBase
 {

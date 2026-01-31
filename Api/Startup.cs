@@ -1,4 +1,6 @@
-﻿using System.Text;
+using System.Text;
+using Asp.Versioning;
+using Asp.Versioning.ApiExplorer;
 using ContactManagerCS.Common.ApiKeyAuthentication;
 using ContactManagerCS.Common.Loggers;
 using ContactManagerCS.DAL.Database;
@@ -9,6 +11,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
@@ -58,31 +61,24 @@ public class Startup
         //    });
 
         services.AddControllers();
+        services.AddApiVersioning(options =>
+        {
+            options.DefaultApiVersion = new ApiVersion(1, 0);
+            options.AssumeDefaultVersionWhenUnspecified = false;
+            options.ReportApiVersions = true;
+        })
+        .AddMvc()
+        .AddApiExplorer(options =>
+        {
+            options.GroupNameFormat = "'v'VVV";
+            options.SubstituteApiVersionInUrl = true;
+        });
+
         services.AddEndpointsApiExplorer();
         services.AddAutoMapper(typeof(ContactMapper));
+        services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
         services.AddSwaggerGen(options =>
         {
-            var basePath = AppContext.BaseDirectory;
-            var xmlPath = Path.Combine(basePath, "ContactManagerCS.xml");
-
-            options.SwaggerDoc("v1", new OpenApiInfo
-            {
-                Version = "v1",
-                Title = "Contact manager",
-                Description = "An ASP.NET Core Web API for managing contact items",
-                TermsOfService = new Uri("https://example.com/terms"),
-                Contact = new OpenApiContact
-                {
-                    Name = "Example Contact",
-                    Url = new Uri("https://example.com/contact")
-                },
-                License = new OpenApiLicense
-                {
-                    Name = "Example License",
-                    Url = new Uri("https://example.com/license")
-                }
-            });
-
             options.AddSecurityDefinition("apiKey", new OpenApiSecurityScheme
             {
                 In = ParameterLocation.Header,
@@ -127,7 +123,11 @@ public class Startup
             app.UseSwagger();
             app.UseSwaggerUI(options =>
             {
-                options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+                var provider = app.ApplicationServices.GetRequiredService<IApiVersionDescriptionProvider>();
+                foreach (var description in provider.ApiVersionDescriptions)
+                {
+                    options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", description.GroupName.ToUpperInvariant());
+                }
                 options.RoutePrefix = string.Empty;
             });
         }
