@@ -14,6 +14,7 @@ namespace ContactManagerCS.Tests;
 public class ContactServiceTests
 {
     private readonly Mock<IContactRepository> _mockRepo;
+    private readonly Mock<ICustomLogger> _mockLogger;
     private readonly ContactService _contactService;
     //private readonly RabbitMQLogger _logger;
     private readonly IMapper _mapper;
@@ -23,9 +24,12 @@ public class ContactServiceTests
         var contactMapperProfile = new ContactMapper();
         var mapperConfiguration = new MapperConfiguration(cfg => cfg.AddProfile(contactMapperProfile));
         _mapper = new Mapper(mapperConfiguration);
+
         //_logger = new RabbitMQLogger(new());
         _mockRepo = new Mock<IContactRepository>();
-        _contactService = new ContactService(_mockRepo.Object, null, _mapper);
+        _mockLogger = new Mock<ICustomLogger>();
+
+        _contactService = new ContactService(_mockRepo.Object, _mockLogger.Object, _mapper);
     }
 
     [Fact]
@@ -75,7 +79,7 @@ public class ContactServiceTests
         //Assert
         Assert.NotNull(exception);
         Assert.IsType<ContactException>(exception);
-        Assert.Contains("Can't GetById: contact with given Id don't exist", exception.Message);
+        Assert.Contains("Can't GetById: contact with given Id = 0 don't exist", exception.Message);
     }
 
     [Theory]
