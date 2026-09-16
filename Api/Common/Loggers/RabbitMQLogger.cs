@@ -24,7 +24,7 @@ public class RabbitMQLogger : ICustomLogger
 
         _channel.ExchangeDeclare(exchange: _exchangeName, type: ExchangeType.Direct);
 
-        //_channel.QueueDeclare(queue: _queueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
+        //_channel.QueueDeclare(queue: _queueName, durable: false, exclusive: true, autoDelete: true, arguments: null);
     }
 
     public void Log(string message)

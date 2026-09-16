@@ -32,11 +32,11 @@ public class LogService : ILogService
 
         _channel.ExchangeDeclare(exchange: _exchangeName, type: ExchangeType.Direct);
 
-        _channel.QueueDeclare(queue: _queueNameError, durable: false, exclusive: false, autoDelete: false, arguments: null);
+        _channel.QueueDeclare(queue: _queueNameError, durable: false, exclusive: true, autoDelete: true, arguments: null);
 
         var args = new Dictionary<string, object>();
         args.Add("x-dead-letter-exchange", _queueNameError);
-        _channel.QueueDeclare(queue: _queueName, durable: false, exclusive: false, autoDelete: false, arguments: args);
+        _channel.QueueDeclare(queue: _queueName, durable: false, exclusive: true, autoDelete: true, arguments: args);
 
         _channel.QueueBind(queue: _queueName, exchange: _exchangeName, routingKey: _queueName);
         _channel.QueueBind(queue: _queueNameError, exchange: _exchangeName, routingKey: _queueNameError);
